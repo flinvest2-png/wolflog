@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WolfLog</title>
+<style>
+body{font-family:Arial;background:#0a0a0a;color:#fff;margin:0;padding:20px}
+.card{background:#111;padding:20px;border-radius:16px;margin-bottom:16px}
+input{width:100%;padding:10px;margin:8px 0;background:#000;color:#fff;border:1px solid #333;border-radius:8px}
+button{padding:12px;background:#fff;color:#000;border:none;border-radius:10px;cursor:pointer;width:100%}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="card">
+    <h2>WolfLog Login</h2>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Entrar</button>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <div class="card">
+    <h2>Dashboard</h2>
+    <p>Total Trades: <span id="totalTrades">0</span></p>
+    <p>P/L: <span id="totalPL">0</span></p>
+  </div>
+
+  <div class="card">
+    <h3>Novo Trade</h3>
+    <input id="asset" placeholder="Ativo">
+    <input id="result" placeholder="Resultado">
+    <button onclick="addTrade()">Guardar</button>
+  </div>
+
+  <div class="card">
+    <h3>Trades</h3>
+    <div id="tradeList"></div>
+  </div>
+</div>
+
+<script>
+let trades = [];
+
+function login(){
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+}
+
+function addTrade(){
+  const asset = document.getElementById('asset').value;
+  const result = Number(document.getElementById('result').value);
+  if(!asset || !result) return;
+
+  trades.push({asset,result});
+  render();
+}
+
+function render(){
+  document.getElementById('totalTrades').innerText = trades.length;
+  const total = trades.reduce((a,b)=>a+b.result,0);
+  document.getElementById('totalPL').innerText = total;
+
+  const list = document.getElementById('tradeList');
+  list.innerHTML = trades.map(t=>`<p>${t.asset} - ${t.result}</p>`).join('');
+}
+</script>
+
+</body>
+</html>
