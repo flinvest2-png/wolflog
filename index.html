@@ -145,7 +145,7 @@
   </style>
 </head>
 <body>
-  <div id="loginScreen" class="login-shell">
+  <div id="authScreen" class="login-shell">
     <div class="card login-card">
       <div class="logo-wrap" style="justify-content:center; margin-bottom:20px;">
         <div class="logo-icon">
@@ -168,17 +168,49 @@
           <div class="logo-sub">Trading Intelligence</div>
         </div>
       </div>
-      <h2 style="text-align:center; font-size:28px; margin-bottom:8px;">Entrar na WolfLog</h2>
-      <p class="muted" style="text-align:center; margin-bottom:20px;">Acede ao teu journal, contas e saques.</p>
-      <div class="field">
-        <label>Email</label>
-        <input id="loginEmail" placeholder="Email" />
+
+      <div class="row" style="justify-content:center; margin-bottom:18px;">
+        <button id="showLoginBtn" class="btn-white" style="width:auto; min-width:140px;">Entrar</button>
+        <button id="showRegisterBtn" class="btn-outline" style="width:auto; min-width:140px;">Registar</button>
       </div>
-      <div class="field">
-        <label>Password</label>
-        <input id="loginPassword" type="password" placeholder="Password" />
+
+      <div id="loginPanel">
+        <h2 style="text-align:center; font-size:28px; margin-bottom:8px;">Entrar na WolfLog</h2>
+        <p class="muted" style="text-align:center; margin-bottom:20px;">Acede ao teu journal, contas e saques.</p>
+        <div class="field">
+          <label>Email</label>
+          <input id="loginEmail" placeholder="Email" />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input id="loginPassword" type="password" placeholder="Password" />
+        </div>
+        <button id="loginBtn" class="btn-white full">Entrar</button>
+        <p class="small muted" style="text-align:center; margin-top:14px;">Modo atual: autenticação local no browser. Cada utilizador fica guardado apenas neste dispositivo.</p>
       </div>
-      <button id="loginBtn" class="btn-white full">Entrar</button>
+
+      <div id="registerPanel" class="hidden">
+        <h2 style="text-align:center; font-size:28px; margin-bottom:8px;">Criar conta WolfLog</h2>
+        <p class="muted" style="text-align:center; margin-bottom:20px;">Registo local para testar a app final antes da versão cloud.</p>
+        <div class="field">
+          <label>Nome</label>
+          <input id="registerName" placeholder="O teu nome" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input id="registerEmail" placeholder="Email" />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input id="registerPassword" type="password" placeholder="Password" />
+        </div>
+        <div class="field">
+          <label>Confirmar password</label>
+          <input id="registerPassword2" type="password" placeholder="Confirmar password" />
+        </div>
+        <button id="registerBtn" class="btn-gold full">Criar conta</button>
+        <p class="small muted" style="text-align:center; margin-top:14px;">O registo cria um utilizador local e separa os dados por email neste browser.</p>
+      </div>
     </div>
   </div>
 
@@ -207,7 +239,8 @@
               <div class="logo-sub">Trading Intelligence</div>
             </div>
           </div>
-          <p class="muted" style="max-width:760px; margin-top:14px;">Versão PRO com dashboard, trades, contas de avaliação vs financiadas e registo completo de saques.</p>
+          <p class="muted" style="max-width:760px; margin-top:14px;">Versão PRO com dashboard, trades, contas de avaliação vs financiadas, registo local por utilizador e histórico completo de saques.</p>
+          <p id="currentUserLabel" class="small muted" style="margin-top:10px;"></p>
         </div>
         <div class="top-actions">
           <button id="proBtn" class="btn-white">Upgrade Pro</button>
@@ -239,10 +272,8 @@
   <script>
     const storageKeys = {
       auth: 'wolflog_pro_auth',
-      pro: 'wolflog_pro_plan',
-      accounts: 'wolflog_pro_accounts',
-      trades: 'wolflog_pro_trades',
-      withdrawals: 'wolflog_pro_withdrawals'
+      users: 'wolflog_local_users',
+      activeUser: 'wolflog_active_user'
     };
 
     const initialAccounts = [
@@ -274,43 +305,87 @@
     let state = {
       isLoggedIn: false,
       email: '',
+      name: '',
       isPro: false,
-      accounts: [...initialAccounts],
-      trades: [...initialTrades],
-      withdrawals: [...initialWithdrawals],
-      activeTab: 'dashboard'
+      accounts: [],
+      trades: [],
+      withdrawals: [],
+      activeTab: 'dashboard',
+      authMode: 'login'
     };
 
     function currency(value) {
       return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value || 0);
     }
 
-    function saveState() {
-      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: state.isLoggedIn, email: state.email }));
-      localStorage.setItem(storageKeys.pro, JSON.stringify(state.isPro));
-      localStorage.setItem(storageKeys.accounts, JSON.stringify(state.accounts));
-      localStorage.setItem(storageKeys.trades, JSON.stringify(state.trades));
-      localStorage.setItem(storageKeys.withdrawals, JSON.stringify(state.withdrawals));
+    function slugEmail(email) {
+      return String(email || '').trim().toLowerCase();
     }
 
-    function loadState() {
+    function defaultUserData(name = '', email = '') {
+      return {
+        profile: { name, email },
+        isPro: false,
+        accounts: JSON.parse(JSON.stringify(initialAccounts)),
+        trades: JSON.parse(JSON.stringify(initialTrades)),
+        withdrawals: JSON.parse(JSON.stringify(initialWithdrawals))
+      };
+    }
+
+    function getAllUsers() {
       try {
-        const auth = JSON.parse(localStorage.getItem(storageKeys.auth) || 'null');
-        const pro = JSON.parse(localStorage.getItem(storageKeys.pro) || 'false');
-        const accounts = JSON.parse(localStorage.getItem(storageKeys.accounts) || 'null');
-        const trades = JSON.parse(localStorage.getItem(storageKeys.trades) || 'null');
-        const withdrawals = JSON.parse(localStorage.getItem(storageKeys.withdrawals) || 'null');
-        if (auth) {
-          state.isLoggedIn = !!auth.isLoggedIn;
-          state.email = auth.email || '';
-        }
-        if (typeof pro === 'boolean') state.isPro = pro;
-        if (accounts) state.accounts = accounts;
-        if (trades) state.trades = trades;
-        if (withdrawals) state.withdrawals = withdrawals;
+        return JSON.parse(localStorage.getItem(storageKeys.users) || '{}');
       } catch (e) {
-        console.error('Erro ao carregar dados', e);
+        return {};
       }
+    }
+
+    function saveAllUsers(users) {
+      localStorage.setItem(storageKeys.users, JSON.stringify(users));
+    }
+
+    function getCurrentUserData() {
+      const key = slugEmail(state.email);
+      const users = getAllUsers();
+      return users[key] || null;
+    }
+
+    function saveCurrentUserData() {
+      const key = slugEmail(state.email);
+      if (!key) return;
+      const users = getAllUsers();
+      users[key] = {
+        profile: { name: state.name, email: state.email },
+        isPro: state.isPro,
+        accounts: state.accounts,
+        trades: state.trades,
+        withdrawals: state.withdrawals
+      };
+      saveAllUsers(users);
+      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: state.isLoggedIn, email: state.email }));
+      localStorage.setItem(storageKeys.activeUser, key);
+    }
+
+    function loadActiveUser() {
+      const key = slugEmail(state.email || JSON.parse(localStorage.getItem(storageKeys.auth) || '{}').email || '');
+      const users = getAllUsers();
+      if (!key || !users[key]) return false;
+      const user = users[key];
+      state.email = user.profile.email;
+      state.name = user.profile.name || '';
+      state.isPro = !!user.isPro;
+      state.accounts = user.accounts || [];
+      state.trades = user.trades || [];
+      state.withdrawals = user.withdrawals || [];
+      return true;
+    }
+
+    function switchAuthMode(mode) {
+      state.authMode = mode;
+      document.getElementById('loginPanel').classList.toggle('hidden', mode !== 'login');
+      document.getElementById('registerPanel').classList.toggle('hidden', mode !== 'register');
+      document.getElementById('showLoginBtn').className = mode === 'login' ? 'btn-white' : 'btn-outline';
+      document.getElementById('showRegisterBtn').className = mode === 'register' ? 'btn-white' : 'btn-outline';
     }
 
     function getTotals() {
@@ -361,6 +436,7 @@
         </div>
       `).join('');
       document.getElementById('proBtn').textContent = state.isPro ? 'Plano PRO ativo' : 'Upgrade Pro';
+      document.getElementById('currentUserLabel').textContent = `Utilizador atual: ${state.name || 'Sem nome'} · ${state.email}`;
     }
 
     function renderDashboard() {
@@ -469,7 +545,7 @@
           emotion: document.getElementById('tradeEmotion').value,
           notes: document.getElementById('tradeNotes').value
         });
-        saveState();
+        saveCurrentUserData();
         renderAll();
       };
     }
@@ -595,7 +671,7 @@
           totalWithdrawn: 0,
           nextPayoutDate: funded ? document.getElementById('accountPayoutDate').value : ''
         });
-        saveState();
+        saveCurrentUserData();
         renderAll();
       };
     }
@@ -645,7 +721,7 @@
             <p class="muted">✔ Logbook completo</p>
             <p class="muted">✔ Estatísticas básicas</p>
             <p class="muted">✔ Uso ilimitado manual</p>
-            <p class="muted">✔ Separação entre contas em avaliação e financiadas</p>
+            <p class="muted">✔ Registo local por utilizador neste browser</p>
             <button class="btn-outline full" disabled>Plano Atual</button>
           </div>
           <div class="card" style="background:linear-gradient(135deg,#18181b,#000); border-color: rgba(251,191,36,.25);">
@@ -662,7 +738,7 @@
       `;
       document.getElementById('pricingProBtn').onclick = () => {
         state.isPro = true;
-        saveState();
+        saveCurrentUserData();
         renderAll();
       };
     }
@@ -719,7 +795,7 @@
           notes: document.getElementById('withdrawNotes').value
         });
         state.accounts = state.accounts.map(a => a.accountName === accountName ? { ...a, totalWithdrawn: a.totalWithdrawn + Number(amount) } : a);
-        saveState();
+        saveCurrentUserData();
         renderAll();
       };
     }
@@ -740,29 +816,59 @@
       renderPricing();
       renderWithdrawals();
       setActiveTab(state.activeTab);
-      saveState();
+      saveCurrentUserData();
     }
 
-    document.getElementById('loginBtn').onclick = () => {
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value.trim();
-      if (!email || !password) return alert('Preenche email e password.');
+    document.getElementById('showLoginBtn').onclick = () => switchAuthMode('login');
+    document.getElementById('showRegisterBtn').onclick = () => switchAuthMode('register');
+
+    document.getElementById('registerBtn').onclick = () => {
+      const name = document.getElementById('registerName').value.trim();
+      const email = slugEmail(document.getElementById('registerEmail').value);
+      const password = document.getElementById('registerPassword').value;
+      const password2 = document.getElementById('registerPassword2').value;
+      if (!name || !email || !password) return alert('Preenche nome, email e password.');
+      if (password !== password2) return alert('As passwords não coincidem.');
+      const users = getAllUsers();
+      if (users[email]) return alert('Esse email já está registado neste browser.');
+      users[email] = { ...defaultUserData(name, email), password };
+      saveAllUsers(users);
       state.isLoggedIn = true;
       state.email = email;
-      saveState();
+      state.name = name;
+      state.isPro = false;
+      state.accounts = JSON.parse(JSON.stringify(initialAccounts));
+      state.trades = JSON.parse(JSON.stringify(initialTrades));
+      state.withdrawals = JSON.parse(JSON.stringify(initialWithdrawals));
+      saveCurrentUserData();
+      boot();
+    };
+
+    document.getElementById('loginBtn').onclick = () => {
+      const email = slugEmail(document.getElementById('loginEmail').value);
+      const password = document.getElementById('loginPassword').value;
+      if (!email || !password) return alert('Preenche email e password.');
+      const users = getAllUsers();
+      if (!users[email]) return alert('Utilizador não encontrado neste browser. Usa Registar primeiro.');
+      if (users[email].password !== password) return alert('Password incorreta.');
+      state.isLoggedIn = true;
+      state.email = email;
+      state.name = users[email].profile?.name || '';
+      loadActiveUser();
+      saveCurrentUserData();
       boot();
     };
 
     document.getElementById('logoutBtn').onclick = () => {
       state.isLoggedIn = false;
-      saveState();
+      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: false, email: '' }));
       boot();
     };
 
     document.getElementById('exportBtn').onclick = () => {
       const payload = {
         exportedAt: new Date().toISOString(),
-        email: state.email,
+        user: { name: state.name, email: state.email },
         isPro: state.isPro,
         accounts: state.accounts,
         trades: state.trades,
@@ -779,7 +885,7 @@
 
     document.getElementById('proBtn').onclick = () => {
       state.isPro = true;
-      saveState();
+      saveCurrentUserData();
       renderAll();
     };
 
@@ -788,10 +894,22 @@
     });
 
     function boot() {
-      loadState();
-      document.getElementById('loginScreen').classList.toggle('hidden', state.isLoggedIn);
+      try {
+        const auth = JSON.parse(localStorage.getItem(storageKeys.auth) || 'null');
+        if (auth && auth.isLoggedIn && auth.email) {
+          state.isLoggedIn = true;
+          state.email = slugEmail(auth.email);
+          loadActiveUser();
+        }
+      } catch (e) {}
+
+      document.getElementById('authScreen').classList.toggle('hidden', state.isLoggedIn);
       document.getElementById('appScreen').classList.toggle('hidden', !state.isLoggedIn);
-      if (state.isLoggedIn) renderAll();
+      if (state.isLoggedIn) {
+        renderAll();
+      } else {
+        switchAuthMode(state.authMode || 'login');
+      }
     }
 
     boot();
