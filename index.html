@@ -304,7 +304,7 @@
       auth: 'wolflog_pro_auth',
       users: 'wolflog_local_users'
     };
-    const STRIPE_URL = 'https://buy.stripe.com/6oUbJ25AEgvR6Ln27RaR200';
+    const STRIPE_URL = 'https://buy.stripe.com/6oUbJ25AEgvR6ln27RaR200';
     let deferredPrompt = null;
 
     const state = {
@@ -572,166 +572,12 @@
 
     function renderPricing() {
       document.getElementById('pricing').innerHTML = `<div class="grid grid-2"><div class="card"><h2 class="title">Plano Gratuito</h2><p class="muted">✔ Até 2 contas</p><p class="muted">✔ Logbook completo</p><p class="muted">✔ Estatísticas básicas</p><p class="muted">✔ Uso ilimitado manual</p><p class="muted">✔ PWA instalável no telemóvel</p><button class="btn-outline full" disabled>Plano Atual</button></div><div class="card" style="background:linear-gradient(135deg,#18181b,#000); border-color: rgba(251,191,36,.25);"><h2 class="title" style="color:#fde68a;">Plano PRO</h2><div style="font-size:32px; font-weight:800; margin-bottom:16px;">€9,90/mês</div><p class="muted">✔ Contas ilimitadas</p><p class="muted">✔ Estatísticas avançadas</p><p class="muted">✔ Alertas inteligentes</p><p class="muted">✔ Histórico completo de saques</p><button id="stripeCheckoutBtn" class="btn-gold full">Ativar PRO agora</button></div></div>`;
-      document.getElementById('stripeCheckoutBtn').onclick = () => window.open(STRIPE_URL, '_blank');
+      document.getElementById('stripeCheckoutBtn').onclick = () => {
+  window.location.href = STRIPE_URL;
+};
     }
 
     function renderWithdrawals() {
       const funded = state.accounts.filter(a => a.phase === 'Funded');
       const options = funded.length ? funded.map(a => `<option value="${a.accountName}">${a.accountName}</option>`).join('') : '<option value="">Sem contas financiadas</option>';
-      const history = state.withdrawals.map(w => `<div class="item"><div class="between" style="align-items:flex-start;"><div><div class="row"><strong>${w.accountName}</strong><span class="badge badge-outline">${w.firm}</span><span class="badge ${w.status === 'Recebido' ? 'badge-green' : w.status === 'Pago' ? 'badge-blue' : 'badge-amber'}">${w.status}</span></div><p class="muted small" style="margin-top:8px;">${w.date}</p>${w.notes ? `<p>${w.notes}</p>` : ''}</div><div class="text-green"><strong>${currency(w.amount)}</strong></div></div></div>`).join('');
-      document.getElementById('withdrawals').innerHTML = `<div class="layout"><div class="card"><h2 class="title">Registar saque</h2><div class="field"><label>Conta financiada</label><select id="withdrawAccount">${options}</select></div><div class="field"><label>Data</label><input id="withdrawDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>Valor</label><input id="withdrawAmount" type="number" placeholder="Ex.: 1000"></div><div class="field"><label>Estado</label><select id="withdrawStatus"><option>Pedido</option><option>Pago</option><option>Recebido</option></select></div><div class="field"><label>Notas</label><textarea id="withdrawNotes" placeholder="Observações sobre o saque"></textarea></div><button id="saveWithdrawBtn" class="btn-white full">Guardar saque</button></div><div class="card"><h2 class="title">Histórico de saques</h2><div class="grid">${history || '<div class="item list-empty">Sem saques ainda.</div>'}</div></div></div>`;
-      document.getElementById('saveWithdrawBtn').onclick = () => {
-        if (!funded.length) return alert('Precisas de pelo menos uma conta financiada para registar saques.');
-        const accountName = document.getElementById('withdrawAccount').value;
-        const amount = document.getElementById('withdrawAmount').value;
-        if (!accountName || amount === '') return alert('Preenche conta e valor.');
-        const acc = state.accounts.find(a => a.accountName === accountName);
-        state.withdrawals.unshift({ id: Date.now(), accountName, firm: acc ? acc.firm : '', date: document.getElementById('withdrawDate').value, amount: Number(amount), status: document.getElementById('withdrawStatus').value, notes: document.getElementById('withdrawNotes').value.trim() });
-        state.accounts = state.accounts.map(a => a.accountName === accountName ? { ...a, totalWithdrawn: Number(a.totalWithdrawn || 0) + Number(amount) } : a);
-        saveCurrentUser(); renderAll();
-      };
-    }
-
-    function setActiveTab(tab) {
-      state.activeTab = tab;
-      document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
-      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
-      document.getElementById(tab).classList.remove('hidden');
-    }
-
-    function renderAll() {
-      renderStatsGrid();
-      renderDashboard();
-      renderTrades();
-      renderAccounts();
-      renderStatsPage();
-      renderPricing();
-      renderWithdrawals();
-      setActiveTab(state.activeTab);
-      saveCurrentUser();
-      updateInstallUi();
-    }
-
-    function setupEvents() {
-      document.getElementById('enterAppBtn').onclick = () => {
-        document.getElementById('landingScreen').classList.add('hidden');
-        document.getElementById('authScreen').classList.remove('hidden');
-      };
-      document.getElementById('showLoginBtn').onclick = () => showAuthPanel('login');
-      document.getElementById('showRegisterBtn').onclick = () => showAuthPanel('register');
-      document.getElementById('showForgotBtn').onclick = () => showAuthPanel('forgot');
-      document.getElementById('backToLoginBtn').onclick = () => showAuthPanel('login');
-      document.getElementById('installBtnAuth').onclick = installApp;
-      document.getElementById('installBtnApp').onclick = installApp;
-
-      document.getElementById('registerBtn').onclick = () => {
-        const name = document.getElementById('registerName').value.trim();
-        const email = String(document.getElementById('registerEmail').value || '').trim().toLowerCase();
-        const password = document.getElementById('registerPassword').value;
-        const password2 = document.getElementById('registerPassword2').value;
-        if (!name || !email || !password) return alert('Preenche nome, email e password.');
-        if (password !== password2) return alert('As passwords não coincidem.');
-        const users = getUsers();
-        if (users[email]) return alert('Esse email já está registado neste browser.');
-        users[email] = defaultUserData(name, email, password);
-        setUsers(users);
-        setAuth(email);
-        loadCurrentUser();
-        document.getElementById('authScreen').classList.add('hidden');
-        document.getElementById('appScreen').classList.remove('hidden');
-        renderAll();
-      };
-
-      document.getElementById('loginBtn').onclick = () => {
-        const email = String(document.getElementById('loginEmail').value || '').trim().toLowerCase();
-        const password = document.getElementById('loginPassword').value;
-        if (!email || !password) return alert('Preenche email e password.');
-        const users = getUsers();
-        if (!users[email]) return alert('Utilizador não encontrado neste browser. Usa Registar primeiro.');
-        if (users[email].password !== password) return alert('Password incorreta.');
-        setAuth(email);
-        loadCurrentUser();
-        document.getElementById('authScreen').classList.add('hidden');
-        document.getElementById('appScreen').classList.remove('hidden');
-        renderAll();
-      };
-
-      document.getElementById('resetPasswordBtn').onclick = () => {
-        const email = String(document.getElementById('forgotEmail').value || '').trim().toLowerCase();
-        const password = document.getElementById('forgotPassword').value;
-        const password2 = document.getElementById('forgotPassword2').value;
-        if (!email || !password) return alert('Preenche email e nova password.');
-        if (password !== password2) return alert('As passwords não coincidem.');
-        const users = getUsers();
-        if (!users[email]) return alert('Não existe nenhuma conta com esse email neste browser.');
-        users[email].password = password;
-        setUsers(users);
-        alert('Password atualizada com sucesso.');
-        document.getElementById('loginEmail').value = email;
-        document.getElementById('loginPassword').value = '';
-        showAuthPanel('login');
-      };
-
-      document.getElementById('logoutBtn').onclick = () => {
-        state.isLoggedIn = false;
-        clearAuth();
-        document.getElementById('appScreen').classList.add('hidden');
-        document.getElementById('landingScreen').classList.remove('hidden');
-      };
-
-      document.getElementById('exportBtn').onclick = () => {
-        const payload = {
-          exportedAt: new Date().toISOString(),
-          user: { name: state.name, email: state.email },
-          isPro: state.isPro,
-          accounts: state.accounts,
-          trades: state.trades,
-          withdrawals: state.withdrawals
-        };
-        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'wolflog-pro-export.json';
-        a.click();
-        URL.revokeObjectURL(url);
-      };
-
-      document.getElementById('proBtn').onclick = () => setActiveTab('pricing');
-      document.querySelectorAll('.tab').forEach(btn => { btn.onclick = () => setActiveTab(btn.dataset.tab); });
-    }
-
-    function boot() {
-      const auth = getAuth();
-      if (auth?.isLoggedIn && loadCurrentUser()) {
-        document.getElementById('landingScreen').classList.add('hidden');
-        document.getElementById('authScreen').classList.add('hidden');
-        document.getElementById('appScreen').classList.remove('hidden');
-        renderAll();
-      } else {
-        document.getElementById('landingScreen').classList.remove('hidden');
-        document.getElementById('authScreen').classList.add('hidden');
-        document.getElementById('appScreen').classList.add('hidden');
-        showAuthPanel('login');
-        updateInstallUi();
-      }
-    }
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
-    }
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      updateInstallUi();
-    });
-    window.addEventListener('appinstalled', () => {
-      deferredPrompt = null;
-      updateInstallUi();
-    });
-
-    setupEvents();
-    boot();
-  </script>
-</body>
-</html>
+      const history = state.withdrawals.map(w => `<div class="item"><div class="between" style="align-items:flex-start;"><div><div class="row"><strong>${w.accountName}</strong><span class="badge badge-outline">${w.firm}</span><span class="badge ${w.status === 'Recebido' ? 'badge-green' : w.status === 'Pago' ? 'badge-blue' : 'badge-amber'}">${w.status}</span></div><p class="muted small"
