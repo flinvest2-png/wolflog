@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="WolfLog" />
   <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.webmanifest" />
   <title>WolfLog PRO</title>
   <style>
     :root {
@@ -35,6 +36,7 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
+
     .hidden { display: none !important; }
     .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
     .card {
@@ -71,7 +73,6 @@
       color: transparent;
     }
     .logo-sub { text-transform: uppercase; letter-spacing: .34em; color: rgba(251,191,36,.6); font-size: 10px; font-weight: 600; }
-
     input, select, textarea {
       width: 100%;
       padding: 12px 14px;
@@ -117,33 +118,18 @@
       background: var(--bg-soft); padding: 6px; border-radius: 18px; margin-top: 26px;
       position: sticky; top: 0; z-index: 10;
     }
-    .tab {
-      background: transparent; color: #fff; padding: 12px; border-radius: 12px; text-align:center;
-    }
+    .tab { background: transparent; color: #fff; padding: 12px; border-radius: 12px; text-align:center; }
     .tab.active { background: #27272a; }
     .tab-panel { margin-top: 18px; }
-    .item {
-      background: #0a0a0a;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-    }
-    .progress {
-      margin-top: 10px; height: 10px; border-radius: 999px; overflow: hidden; background: #27272a;
-    }
-    .progress > span {
-      display:block; height:100%; background: linear-gradient(90deg,#fde68a,#fbbf24,#a16207);
-    }
+    .item { background: #0a0a0a; border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+    .progress { margin-top: 10px; height: 10px; border-radius: 999px; overflow: hidden; background: #27272a; }
+    .progress > span { display:block; height:100%; background: linear-gradient(90deg,#fde68a,#fbbf24,#a16207); }
     .mode-switch { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .mode-btn {
-      border:1px solid #444; background:#000; color:#aaa; border-radius:14px; padding:14px; text-align:left;
-    }
+    .mode-btn { border:1px solid #444; background:#000; color:#aaa; border-radius:14px; padding:14px; text-align:left; }
     .mode-btn.active { border-color: var(--gold); background: rgba(251,191,36,.08); color:#fff; }
     .text-green { color: var(--green); }
     .text-red { color: var(--red); }
-    .login-shell {
-      min-height: 100vh; display:flex; align-items:center; justify-content:center; padding: 18px;
-    }
+    .login-shell { min-height: 100vh; display:flex; align-items:center; justify-content:center; padding: 18px; }
     .login-card { width:100%; max-width: 460px; }
     .top-actions { display:flex; gap:10px; flex-wrap:wrap; }
     .list-empty { padding: 20px; text-align: center; color: var(--muted); }
@@ -193,25 +179,25 @@
       </div>
       <h2 style="font-size:26px; margin-bottom:10px;">Domina a tua performance de trading</h2>
       <p class="muted" style="margin-bottom:20px;">Regista. Analisa. Evolui. Como um profissional.</p>
-      <button id="enterAppBtn" class="btn-gold full" onclick="document.getElementById('landingScreen').classList.add('hidden');document.getElementById('authScreen').classList.remove('hidden');">Entrar na plataforma</button>
+      <button id="enterAppBtn" class="btn-gold full">Entrar na plataforma</button>
     </div>
   </div>
 
   <div id="authScreen" class="login-shell hidden">
     <div class="card login-card">
       <div class="logo-wrap" style="justify-content:center; margin-bottom:20px;">
-        <div class="logo-icon" id="authLogoIcon">
+        <div class="logo-icon">
           <svg viewBox="0 0 120 120" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="goldElite" x1="0" y1="0" x2="120" y2="120">
-      <stop offset="0%" stop-color="#fef9c3"/>
-      <stop offset="50%" stop-color="#facc15"/>
-      <stop offset="100%" stop-color="#713f12"/>
-    </linearGradient>
-  </defs>
-  <rect x="8" y="8" width="104" height="104" rx="18" fill="none" stroke="url(#goldElite)" stroke-width="1.5"/>
-  <text x="50%" y="55%" text-anchor="middle" fill="url(#goldElite)" font-size="40" font-family="Inter, sans-serif" font-weight="600" letter-spacing="4">WL</text>
-</svg>
+            <defs>
+              <linearGradient id="goldElite" x1="0" y1="0" x2="120" y2="120">
+                <stop offset="0%" stop-color="#fef9c3"/>
+                <stop offset="50%" stop-color="#facc15"/>
+                <stop offset="100%" stop-color="#713f12"/>
+              </linearGradient>
+            </defs>
+            <rect x="8" y="8" width="104" height="104" rx="18" fill="none" stroke="url(#goldElite)" stroke-width="1.5"/>
+            <text x="50%" y="55%" text-anchor="middle" fill="url(#goldElite)" font-size="40" font-family="Inter, sans-serif" font-weight="600" letter-spacing="4">WL</text>
+          </svg>
         </div>
         <div>
           <div class="logo-title">Wolf<span class="gold">Log</span></div>
@@ -220,23 +206,17 @@
       </div>
 
       <div class="row" style="justify-content:center; margin-bottom:18px;">
-        <button id="showLoginBtn" class="btn-white" style="width:auto; min-width:140px;" onclick="document.getElementById('loginPanel').classList.remove('hidden');document.getElementById('registerPanel').classList.add('hidden');document.getElementById('forgotPanel').classList.add('hidden');this.className='btn-white';document.getElementById('showRegisterBtn').className='btn-outline';">Entrar</button>
-        <button id="showRegisterBtn" class="btn-outline" style="width:auto; min-width:140px;" onclick="document.getElementById('loginPanel').classList.add('hidden');document.getElementById('registerPanel').classList.remove('hidden');document.getElementById('forgotPanel').classList.add('hidden');this.className='btn-white';document.getElementById('showLoginBtn').className='btn-outline';">Registar</button>
+        <button id="showLoginBtn" class="btn-white" style="width:auto; min-width:140px;">Entrar</button>
+        <button id="showRegisterBtn" class="btn-outline" style="width:auto; min-width:140px;">Registar</button>
       </div>
 
       <div id="loginPanel">
         <h2 style="text-align:center; font-size:28px; margin-bottom:8px;">Entrar na WolfLog</h2>
         <p class="muted" style="text-align:center; margin-bottom:20px;">Acede ao teu journal, contas e saques.</p>
-        <div class="field">
-          <label>Email</label>
-          <input id="loginEmail" placeholder="Email" />
-        </div>
-        <div class="field">
-          <label>Password</label>
-          <input id="loginPassword" type="password" placeholder="Password" />
-        </div>
+        <div class="field"><label>Email</label><input id="loginEmail" placeholder="Email" /></div>
+        <div class="field"><label>Password</label><input id="loginPassword" type="password" placeholder="Password" /></div>
         <button id="loginBtn" class="btn-white full">Entrar</button>
-        <button id="showForgotBtn" class="btn-outline full" style="margin-top:10px;" onclick="document.getElementById('loginPanel').classList.add('hidden');document.getElementById('registerPanel').classList.add('hidden');document.getElementById('forgotPanel').classList.remove('hidden');document.getElementById('showLoginBtn').className='btn-outline';document.getElementById('showRegisterBtn').className='btn-outline';">Esqueci-me da password</button>
+        <button id="showForgotBtn" class="btn-outline full" style="margin-top:10px;">Esqueci-me da password</button>
         <button id="installBtnAuth" class="btn-gold full hidden" style="margin-top:10px;">Instalar app</button>
         <div id="iosInstallNoteAuth" class="install-note hidden">No iPhone: abre em Safari, toca em Partilhar e escolhe “Adicionar ao ecrã principal”.</div>
         <p class="small muted" style="text-align:center; margin-top:14px;">Versão local no browser, otimizada para desktop, Android e iPhone.</p>
@@ -245,42 +225,21 @@
       <div id="registerPanel" class="hidden">
         <h2 style="text-align:center; font-size:28px; margin-bottom:8px;">Criar conta WolfLog</h2>
         <p class="muted" style="text-align:center; margin-bottom:20px;">A conta começa vazia. Só aparecem dados reais inseridos por ti.</p>
-        <div class="field">
-          <label>Nome</label>
-          <input id="registerName" placeholder="O teu nome" />
-        </div>
-        <div class="field">
-          <label>Email</label>
-          <input id="registerEmail" placeholder="Email" />
-        </div>
-        <div class="field">
-          <label>Password</label>
-          <input id="registerPassword" type="password" placeholder="Password" />
-        </div>
-        <div class="field">
-          <label>Confirmar password</label>
-          <input id="registerPassword2" type="password" placeholder="Confirmar password" />
-        </div>
+        <div class="field"><label>Nome</label><input id="registerName" placeholder="O teu nome" /></div>
+        <div class="field"><label>Email</label><input id="registerEmail" placeholder="Email" /></div>
+        <div class="field"><label>Password</label><input id="registerPassword" type="password" placeholder="Password" /></div>
+        <div class="field"><label>Confirmar password</label><input id="registerPassword2" type="password" placeholder="Confirmar password" /></div>
         <button id="registerBtn" class="btn-gold full">Criar conta</button>
       </div>
 
       <div id="forgotPanel" class="hidden">
         <h2 style="text-align:center; font-size:28px; margin-bottom:8px;">Recuperar password</h2>
         <p class="muted" style="text-align:center; margin-bottom:20px;">Nesta versão local, a password é atualizada neste dispositivo.</p>
-        <div class="field">
-          <label>Email</label>
-          <input id="forgotEmail" placeholder="Email da conta" />
-        </div>
-        <div class="field">
-          <label>Nova password</label>
-          <input id="forgotPassword" type="password" placeholder="Nova password" />
-        </div>
-        <div class="field">
-          <label>Confirmar nova password</label>
-          <input id="forgotPassword2" type="password" placeholder="Confirmar nova password" />
-        </div>
+        <div class="field"><label>Email</label><input id="forgotEmail" placeholder="Email da conta" /></div>
+        <div class="field"><label>Nova password</label><input id="forgotPassword" type="password" placeholder="Nova password" /></div>
+        <div class="field"><label>Confirmar nova password</label><input id="forgotPassword2" type="password" placeholder="Confirmar nova password" /></div>
         <button id="resetPasswordBtn" class="btn-gold full">Atualizar password</button>
-        <button id="backToLoginBtn" class="btn-outline full" style="margin-top:10px;" onclick="document.getElementById('loginPanel').classList.remove('hidden');document.getElementById('registerPanel').classList.add('hidden');document.getElementById('forgotPanel').classList.add('hidden');document.getElementById('showLoginBtn').className='btn-white';document.getElementById('showRegisterBtn').className='btn-outline';">Voltar ao login</button>
+        <button id="backToLoginBtn" class="btn-outline full" style="margin-top:10px;">Voltar ao login</button>
       </div>
     </div>
   </div>
@@ -290,18 +249,18 @@
       <div class="between mobile-stack" style="align-items:flex-start; margin-bottom:18px;">
         <div>
           <div class="logo-wrap">
-            <div class="logo-icon" id="appLogoIcon">
+            <div class="logo-icon">
               <svg viewBox="0 0 120 120" width="52" height="52" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="goldElite2" x1="0" y1="0" x2="120" y2="120">
-      <stop offset="0%" stop-color="#fef9c3"/>
-      <stop offset="50%" stop-color="#facc15"/>
-      <stop offset="100%" stop-color="#713f12"/>
-    </linearGradient>
-  </defs>
-  <rect x="8" y="8" width="104" height="104" rx="18" fill="none" stroke="url(#goldElite2)" stroke-width="1.5"/>
-  <text x="50%" y="55%" text-anchor="middle" fill="url(#goldElite2)" font-size="46" font-family="Inter, sans-serif" font-weight="600" letter-spacing="4">WL</text>
-</svg>
+                <defs>
+                  <linearGradient id="goldElite2" x1="0" y1="0" x2="120" y2="120">
+                    <stop offset="0%" stop-color="#fef9c3"/>
+                    <stop offset="50%" stop-color="#facc15"/>
+                    <stop offset="100%" stop-color="#713f12"/>
+                  </linearGradient>
+                </defs>
+                <rect x="8" y="8" width="104" height="104" rx="18" fill="none" stroke="url(#goldElite2)" stroke-width="1.5"/>
+                <text x="50%" y="55%" text-anchor="middle" fill="url(#goldElite2)" font-size="46" font-family="Inter, sans-serif" font-weight="600" letter-spacing="4">WL</text>
+              </svg>
             </div>
             <div>
               <div class="logo-title">Wolf<span class="gold">Log</span></div>
@@ -336,34 +295,443 @@
       <div id="accounts" class="tab-panel hidden"></div>
       <div id="stats" class="tab-panel hidden"></div>
       <div id="pricing" class="tab-panel hidden"></div>
-<script>
-function renderPricing() {
-  const STRIPE_URL = 'https://buy.stripe.com/6oUbJ25AEgvR6Ln27RaR200';
-  document.getElementById('pricing').innerHTML = `
-    <div class="grid grid-2">
-      <div class="card">
-        <h2 class="title">Plano Gratuito</h2>
-        <p class="muted">✔ Até 2 contas</p>
-        <p class="muted">✔ Logbook completo</p>
-        <p class="muted">✔ Estatísticas básicas</p>
-        <p class="muted">✔ Uso ilimitado manual</p>
-        <p class="muted">✔ PWA instalável no telemóvel</p>
-        <button class="btn-outline full" disabled>Plano Atual</button>
-      </div>
-      <div class="card" style="background:linear-gradient(135deg,#18181b,#000); border-color: rgba(251,191,36,.25);">
-        <h2 class="title" style="color:#fde68a;">Plano PRO</h2>
-        <div style="font-size:32px; font-weight:800; margin-bottom:16px;">€9,90/mês</div>
-        <p class="muted">✔ Contas ilimitadas</p>
-        <p class="muted">✔ Estatísticas avançadas</p>
-        <p class="muted">✔ Alertas inteligentes</p>
-        <p class="muted">✔ Histórico completo de saques</p>
-        <button id="stripeCheckoutBtn" class="btn-gold full">Ativar PRO agora</button>
-      </div>
+      <div id="withdrawals" class="tab-panel hidden"></div>
     </div>
-  `;
+  </div>
 
-  document.getElementById('stripeCheckoutBtn').onclick = () => {
-    window.open(STRIPE_URL, '_blank');
-  };
-}
-</script>
+  <script>
+    const storageKeys = {
+      auth: 'wolflog_pro_auth',
+      users: 'wolflog_local_users'
+    };
+    const STRIPE_URL = 'https://buy.stripe.com/6oUbJ25AEgvR6Ln27RaR200';
+    let deferredPrompt = null;
+
+    const state = {
+      isLoggedIn: false,
+      email: '',
+      name: '',
+      isPro: false,
+      accounts: [],
+      trades: [],
+      withdrawals: [],
+      activeTab: 'dashboard'
+    };
+
+    function getUsers() {
+      try { return JSON.parse(localStorage.getItem(storageKeys.users) || '{}'); }
+      catch { return {}; }
+    }
+
+    function setUsers(users) {
+      localStorage.setItem(storageKeys.users, JSON.stringify(users));
+    }
+
+    function getAuth() {
+      try { return JSON.parse(localStorage.getItem(storageKeys.auth) || 'null'); }
+      catch { return null; }
+    }
+
+    function setAuth(email) {
+      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: true, email }));
+    }
+
+    function clearAuth() {
+      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: false, email: '' }));
+    }
+
+    function currency(value) {
+      return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(value || 0));
+    }
+
+    function isIos() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+
+    function isInStandaloneMode() {
+      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    }
+
+    function updateInstallUi() {
+      const standalone = isInStandaloneMode();
+      const ios = isIos();
+      document.getElementById('installBtnAuth').classList.toggle('hidden', !deferredPrompt || standalone);
+      document.getElementById('installBtnApp').classList.toggle('hidden', !deferredPrompt || standalone);
+      document.getElementById('iosInstallNoteAuth').classList.toggle('hidden', !(ios && !standalone));
+      document.getElementById('iosInstallNoteApp').classList.toggle('hidden', !(ios && !standalone && state.isLoggedIn));
+    }
+
+    async function installApp() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      try { await deferredPrompt.userChoice; } catch {}
+      deferredPrompt = null;
+      updateInstallUi();
+    }
+
+    function defaultUserData(name, email, password) {
+      return { profile: { name, email }, password, isPro: false, accounts: [], trades: [], withdrawals: [] };
+    }
+
+    function loadCurrentUser() {
+      const auth = getAuth();
+      const users = getUsers();
+      if (!auth?.isLoggedIn || !auth.email || !users[auth.email]) return false;
+      const user = users[auth.email];
+      state.isLoggedIn = true;
+      state.email = user.profile.email;
+      state.name = user.profile.name;
+      state.isPro = !!user.isPro;
+      state.accounts = Array.isArray(user.accounts) ? user.accounts : [];
+      state.trades = Array.isArray(user.trades) ? user.trades : [];
+      state.withdrawals = Array.isArray(user.withdrawals) ? user.withdrawals : [];
+      return true;
+    }
+
+    function saveCurrentUser() {
+      if (!state.email) return;
+      const users = getUsers();
+      const old = users[state.email] || defaultUserData(state.name, state.email, '');
+      users[state.email] = {
+        ...old,
+        profile: { name: state.name, email: state.email },
+        isPro: state.isPro,
+        accounts: state.accounts,
+        trades: state.trades,
+        withdrawals: state.withdrawals
+      };
+      setUsers(users);
+    }
+
+    function showAuthPanel(panel) {
+      document.getElementById('loginPanel').classList.toggle('hidden', panel !== 'login');
+      document.getElementById('registerPanel').classList.toggle('hidden', panel !== 'register');
+      document.getElementById('forgotPanel').classList.toggle('hidden', panel !== 'forgot');
+      document.getElementById('showLoginBtn').className = panel === 'login' ? 'btn-white' : 'btn-outline';
+      document.getElementById('showRegisterBtn').className = panel === 'register' ? 'btn-white' : 'btn-outline';
+    }
+
+    function getTotals() {
+      const totalBalance = state.accounts.reduce((sum, a) => sum + Number(a.currentBalance || 0), 0);
+      const pnl = state.trades.reduce((sum, t) => sum + Number(t.result || 0), 0);
+      const wins = state.trades.filter(t => Number(t.result) > 0);
+      const losses = state.trades.filter(t => Number(t.result) < 0);
+      const totalWithdrawn = state.withdrawals.reduce((sum, w) => sum + Number(w.amount || 0), 0);
+      const winRate = state.trades.length ? Math.round((wins.length / state.trades.length) * 100) : 0;
+      const grossProfit = wins.reduce((sum, t) => sum + Number(t.result || 0), 0);
+      const grossLoss = Math.abs(losses.reduce((sum, t) => sum + Number(t.result || 0), 0));
+      const profitFactor = grossLoss ? (grossProfit / grossLoss).toFixed(2) : '—';
+      return {
+        totalBalance,
+        pnl,
+        fundedAccounts: state.accounts.filter(a => a.phase === 'Funded').length,
+        evaluationAccounts: state.accounts.filter(a => a.phase !== 'Funded').length,
+        totalWithdrawn,
+        winRate,
+        profitFactor
+      };
+    }
+
+    function getAlerts() {
+      const items = [];
+      state.accounts.forEach(a => {
+        const gain = Number(a.currentBalance || 0) - Number(a.initialBalance || 0);
+        const target = Number(a.target || 0);
+        const targetProgress = target ? Math.max(0, Math.min(100, (gain / target) * 100)) : 0;
+        const ddRemaining = Number(a.overallDrawdown || 0) - Math.max(0, Number(a.initialBalance || 0) - Number(a.currentBalance || 0));
+        if (a.phase !== 'Funded' && targetProgress >= 80 && targetProgress < 100) items.push({ type: 'green', text: `${a.accountName}: estás a ${Math.round(targetProgress)}% do target.` });
+        if (Number(a.overallDrawdown || 0) > 0 && ddRemaining <= Number(a.overallDrawdown || 0) * 0.2) items.push({ type: 'red', text: `${a.accountName}: atenção ao drawdown total.` });
+        if (a.phase !== 'Funded' && Number(a.completedDays || 0) < Number(a.minTradingDays || 0)) items.push({ type: 'amber', text: `${a.accountName}: faltam ${Number(a.minTradingDays || 0) - Number(a.completedDays || 0)} dias mínimos.` });
+        if (a.phase === 'Funded' && a.nextPayoutDate) items.push({ type: 'blue', text: `${a.accountName}: próximo saque em ${a.nextPayoutDate}.` });
+      });
+      return items.slice(0, 6);
+    }
+
+    function renderStatsGrid() {
+      const totals = getTotals();
+      const cards = [
+        { t: 'Saldo total', v: currency(totals.totalBalance), s: 'Todas as contas' },
+        { t: 'Contas em avaliação', v: String(totals.evaluationAccounts), s: 'Challenge + Verification' },
+        { t: 'Contas financiadas', v: String(totals.fundedAccounts), s: 'Prontas para sacar' },
+        { t: 'P/L acumulado', v: currency(totals.pnl), s: 'Baseado no journal' },
+        { t: 'Total sacado', v: currency(totals.totalWithdrawn), s: 'Histórico de payouts' },
+        { t: 'Profit factor', v: String(totals.profitFactor), s: 'Relação lucro/perda' }
+      ];
+      document.getElementById('statsGrid').innerHTML = cards.map(c => `<div class="card"><p class="muted">${c.t}</p><p class="stat-value">${c.v}</p><p class="small muted">${c.s}</p></div>`).join('');
+      document.getElementById('proBtn').textContent = state.isPro ? 'Plano PRO ativo' : 'Upgrade Pro';
+      document.getElementById('currentUserLabel').textContent = `Utilizador atual: ${state.name || 'Sem nome'} · ${state.email}`;
+    }
+
+    function renderDashboard() {
+      const alerts = getAlerts();
+      const accountsHtml = state.accounts.length ? state.accounts.map(account => {
+        const gain = Number(account.currentBalance || 0) - Number(account.initialBalance || 0);
+        const target = Number(account.target || 0);
+        const targetProgress = target ? Math.max(0, Math.min(100, (gain / target) * 100)) : 0;
+        return `<div class="item">
+          <div class="between" style="align-items:flex-start;">
+            <div>
+              <div class="row"><strong>${account.accountName}</strong><span class="badge badge-dark">${account.phase}</span><span class="badge badge-outline">${account.firm}</span></div>
+              <p class="muted small" style="margin-top:8px;">Saldo atual: ${currency(account.currentBalance)} · ${account.phase === 'Funded' ? `Total sacado: ${currency(account.totalWithdrawn)}` : `Target: ${currency(account.target)}`}</p>
+              <div class="row" style="margin-top:8px;">
+                <span class="badge ${account.phase === 'Funded' ? 'badge-green' : 'badge-amber'}">${account.phase === 'Funded' ? 'Conta financiada' : 'Conta em avaliação'}</span>
+                ${account.phase === 'Funded' && account.nextPayoutDate ? `<span class="badge badge-outline">Próximo saque: ${account.nextPayoutDate}</span>` : ''}
+              </div>
+            </div>
+            <div class="small muted">Dias mínimos: ${account.completedDays}/${account.minTradingDays}</div>
+          </div>
+          ${account.phase !== 'Funded' ? `<div style="margin-top:14px;"><div class="between"><span class="small muted">Progresso para o target</span><span class="small muted">${Math.round(targetProgress)}%</span></div><div class="progress"><span style="width:${targetProgress}%"></span></div></div>` : ''}
+        </div>`;
+      }).join('') : '<div class="item list-empty">Ainda não tens contas adicionadas. Vai ao separador Contas para começar.</div>';
+
+      const alertsHtml = alerts.length ? alerts.map(alert => `<div class="item"><span class="badge ${alert.type === 'red' ? 'badge-red' : alert.type === 'green' ? 'badge-green' : alert.type === 'amber' ? 'badge-amber' : 'badge-blue'}">${alert.text}</span></div>`).join('') : '<div class="item list-empty">Os alertas aparecem apenas quando houver dados reais nas tuas contas.</div>';
+      document.getElementById('dashboard').innerHTML = `<div class="grid grid-2"><div class="card"><h2 class="title">Contas ativas</h2><div class="grid">${accountsHtml}</div></div><div class="card"><h2 class="title">Alertas inteligentes</h2><div class="grid">${alertsHtml}</div></div></div>`;
+    }
+
+    function renderTrades() {
+      const accountOptions = state.accounts.length ? state.accounts.map(a => `<option value="${a.accountName}">${a.accountName}</option>`).join('') : '<option value="">Sem contas disponíveis</option>';
+      const list = state.trades.map(trade => `<div class="item"><div class="between" style="align-items:flex-start;"><div><div class="row"><strong>${trade.asset}</strong><span class="badge badge-dark">${trade.side}</span>${trade.setup ? `<span class="badge badge-outline">${trade.setup}</span>` : ''}</div><p class="muted small" style="margin-top:8px;">${trade.date} · ${trade.account}</p>${trade.emotion ? `<p class="small muted">Estado emocional: ${trade.emotion}</p>` : ''}${trade.notes ? `<p>${trade.notes}</p>` : ''}</div><div class="${Number(trade.result) >= 0 ? 'text-green' : 'text-red'}"><strong>${currency(trade.result)}</strong></div></div></div>`).join('');
+      document.getElementById('trades').innerHTML = `<div class="layout"><div class="card"><h2 class="title">Nova operação</h2><div class="field"><label>Data</label><input id="tradeDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>Ativo</label><input id="tradeAsset" placeholder="EURUSD, XAUUSD, NAS100..."></div><div class="field"><label>Direção</label><select id="tradeSide"><option>Buy</option><option>Sell</option></select></div><div class="field"><label>Conta</label><select id="tradeAccount">${accountOptions}</select></div><div class="field"><label>Setup</label><input id="tradeSetup" placeholder="Breakout, Pullback..."></div><div class="field"><label>Resultado</label><input id="tradeResult" type="number" placeholder="Ex.: 250 ou -120"></div><div class="field"><label>Emoção</label><input id="tradeEmotion" placeholder="Calmo, confiante, ansioso..."></div><div class="field"><label>Notas</label><textarea id="tradeNotes" placeholder="Porque entraste? O que correu bem ou mal?"></textarea></div><button id="saveTradeBtn" class="btn-white full">Guardar trade</button></div><div class="card"><h2 class="title">Journal de operações</h2><div class="grid">${list || '<div class="item list-empty">Sem trades ainda.</div>'}</div></div></div>`;
+      document.getElementById('saveTradeBtn').onclick = () => {
+        if (!state.accounts.length) return alert('Adiciona primeiro uma conta.');
+        const asset = document.getElementById('tradeAsset').value.trim();
+        const result = document.getElementById('tradeResult').value;
+        const account = document.getElementById('tradeAccount').value;
+        if (!asset || result === '' || !account) return alert('Preenche ativo, conta e resultado.');
+        state.trades.unshift({ id: Date.now(), date: document.getElementById('tradeDate').value, asset, side: document.getElementById('tradeSide').value, account, setup: document.getElementById('tradeSetup').value.trim(), result: Number(result), emotion: document.getElementById('tradeEmotion').value.trim(), notes: document.getElementById('tradeNotes').value.trim() });
+        saveCurrentUser(); renderAll();
+      };
+    }
+
+    function renderAccounts() {
+      const accountCards = state.accounts.length ? state.accounts.map(account => {
+        const pnl = Number(account.currentBalance || 0) - Number(account.initialBalance || 0);
+        const drawdownUsed = Math.max(0, Number(account.initialBalance || 0) - Number(account.currentBalance || 0));
+        const ddProgress = Number(account.overallDrawdown || 0) ? Math.min(100, (drawdownUsed / Number(account.overallDrawdown)) * 100) : 0;
+        return `<div class="card"><div class="between" style="align-items:flex-start;"><div><div class="row"><strong style="font-size:20px;">${account.accountName}</strong><span class="badge badge-dark">${account.phase}</span><span class="badge badge-outline">${account.firm}</span></div><div class="row" style="margin-top:8px;"><span class="badge ${account.phase === 'Funded' ? 'badge-green' : 'badge-amber'}">${account.phase === 'Funded' ? 'Financiada' : 'Teste / Avaliação'}</span><span class="badge badge-outline">${account.mode === 'api' ? 'Ligação automática' : 'Manual'}</span>${account.mode === 'api' ? `<span class="badge badge-amber">${account.connectionType === 'api' ? 'API' : account.connectionType === 'read-only' ? 'Read-only' : 'CSV'}</span>` : ''}${account.platform ? `<span class="badge badge-outline">${account.platform}</span>` : ''}</div>${account.phase === 'Funded' && account.nextPayoutDate ? `<p class="small muted" style="margin-top:8px;">Próximo saque: ${account.nextPayoutDate}</p>` : ''}</div><div class="${pnl >= 0 ? 'text-green' : 'text-red'}"><strong>${currency(pnl)}</strong></div></div><div class="grid grid-2" style="margin-top:14px;"><div class="item"><div class="small muted">Saldo atual</div><div style="margin-top:8px;"><strong>${currency(account.currentBalance)}</strong></div></div><div class="item"><div class="small muted">${account.phase === 'Funded' ? 'Sacado' : 'Target'}</div><div style="margin-top:8px;"><strong>${account.phase === 'Funded' ? currency(account.totalWithdrawn) : currency(account.target)}</strong></div></div><div class="item"><div class="small muted">Loss diário</div><div style="margin-top:8px;"><strong>${currency(account.dailyLossLimit)}</strong></div></div><div class="item"><div class="small muted">Dias</div><div style="margin-top:8px;"><strong>${account.completedDays}/${account.minTradingDays}</strong></div></div></div><div style="margin-top:14px;"><div class="between"><span class="small muted">Uso do drawdown total</span><span class="small muted">${Math.round(ddProgress)}%</span></div><div class="progress"><span style="width:${ddProgress}%"></span></div></div><div class="row" style="margin-top:14px;"><button class="btn-danger" data-delete-account="${account.id}">Eliminar conta</button></div></div>`;
+      }).join('') : '<div class="card"><div class="list-empty">Ainda não tens contas adicionadas.</div></div>';
+
+      document.getElementById('accounts').innerHTML = `<div class="layout"><div class="card"><h2 class="title">Adicionar conta</h2><div class="field"><label>Modo de conta</label><div class="mode-switch"><button id="modeManual" class="mode-btn active">Manual<br><span class="small muted">Inserção manual de saldo e regras.</span></button><button id="modeApi" class="mode-btn">Ligação automática<br><span class="small muted">CSV, API ou leitura.</span></button></div></div><div id="apiFields" class="hidden"><div class="field"><label>Tipo de conexão</label><select id="accountConnectionType"><option value="csv">Importação CSV</option><option value="api">API</option><option value="read-only">Read-only / Investor</option></select></div><div class="field"><label>Plataforma</label><select id="accountPlatform"><option value="">Escolher plataforma</option><option>MT5</option><option>cTrader</option><option>DXtrade</option><option>Tradovate</option><option>MatchTrader</option></select></div></div><div class="field"><label>Prop firm</label><input id="accountFirm" placeholder="FTMO, Apex, 5ers..."></div><div class="field"><label>Fase</label><select id="accountPhase"><option>Challenge</option><option>Verification</option><option>Funded</option></select></div><div class="field hidden" id="payoutField"><label>Próxima data de saque</label><input id="accountPayoutDate" type="date"></div><div class="field"><label>Nome da conta</label><input id="accountName" placeholder="FTMO 100K"></div><div class="grid grid-2"><div class="field"><label>Saldo inicial</label><input id="accountInitialBalance" type="number"></div><div class="field"><label>Saldo atual</label><input id="accountCurrentBalance" type="number"></div></div><div class="grid grid-2"><div class="field"><label>Target</label><input id="accountTarget" type="number"></div><div class="field"><label>Loss diário</label><input id="accountDailyLoss" type="number"></div></div><div class="grid grid-2"><div class="field"><label>Drawdown total</label><input id="accountDrawdown" type="number"></div><div class="field"><label>Dias mínimos</label><input id="accountMinDays" type="number"></div></div><div class="field"><label>Dias feitos</label><input id="accountCompletedDays" type="number"></div><button id="saveAccountBtn" class="btn-white full">Guardar conta</button></div><div class="grid">${accountCards}</div></div>`;
+
+      let mode = 'manual';
+      document.getElementById('modeManual').onclick = () => { mode = 'manual'; document.getElementById('modeManual').classList.add('active'); document.getElementById('modeApi').classList.remove('active'); document.getElementById('apiFields').classList.add('hidden'); };
+      document.getElementById('modeApi').onclick = () => { mode = 'api'; document.getElementById('modeApi').classList.add('active'); document.getElementById('modeManual').classList.remove('active'); document.getElementById('apiFields').classList.remove('hidden'); };
+      document.getElementById('accountPhase').onchange = (e) => { document.getElementById('payoutField').classList.toggle('hidden', e.target.value !== 'Funded'); };
+      document.getElementById('saveAccountBtn').onclick = () => {
+        const firm = document.getElementById('accountFirm').value.trim();
+        const accountName = document.getElementById('accountName').value.trim();
+        if (!firm || !accountName) return alert('Preenche a prop firm e o nome da conta.');
+        if (!state.isPro && state.accounts.length >= 2) return alert('O plano gratuito permite até 2 contas. Ativa o PRO para adicionares mais contas.');
+        const phase = document.getElementById('accountPhase').value;
+        const funded = phase === 'Funded';
+        state.accounts.push({
+          id: Date.now(), firm, phase, accountName,
+          initialBalance: Number(document.getElementById('accountInitialBalance').value || 0),
+          currentBalance: Number(document.getElementById('accountCurrentBalance').value || 0),
+          target: Number(document.getElementById('accountTarget').value || 0),
+          dailyLossLimit: Number(document.getElementById('accountDailyLoss').value || 0),
+          overallDrawdown: Number(document.getElementById('accountDrawdown').value || 0),
+          minTradingDays: Number(document.getElementById('accountMinDays').value || 0),
+          completedDays: Number(document.getElementById('accountCompletedDays').value || 0),
+          mode,
+          connectionType: mode === 'api' ? document.getElementById('accountConnectionType').value : 'manual',
+          platform: mode === 'api' ? document.getElementById('accountPlatform').value : '',
+          totalWithdrawn: 0,
+          nextPayoutDate: funded ? document.getElementById('accountPayoutDate').value : ''
+        });
+        saveCurrentUser(); renderAll();
+      };
+
+      document.querySelectorAll('[data-delete-account]').forEach(btn => {
+        btn.onclick = () => {
+          const id = Number(btn.dataset.deleteAccount);
+          if (!confirm('Queres eliminar esta conta?')) return;
+          const acc = state.accounts.find(a => a.id === id);
+          state.accounts = state.accounts.filter(a => a.id !== id);
+          if (acc) {
+            state.trades = state.trades.filter(t => t.account !== acc.accountName);
+            state.withdrawals = state.withdrawals.filter(w => w.accountName !== acc.accountName);
+          }
+          saveCurrentUser(); renderAll();
+        };
+      });
+    }
+
+    function renderStatsPage() {
+      const totals = getTotals();
+      const map = {};
+      state.trades.forEach(t => {
+        if (!t.setup) return;
+        if (!map[t.setup]) map[t.setup] = { count: 0, pnl: 0 };
+        map[t.setup].count += 1;
+        map[t.setup].pnl += Number(t.result || 0);
+      });
+      const setups = Object.entries(map).map(([setup, data]) => ({ setup, ...data })).sort((a,b) => b.pnl - a.pnl);
+      document.getElementById('stats').innerHTML = `<div class="grid grid-2"><div class="card"><h2 class="title">Resumo de performance</h2><div class="grid grid-2"><div class="item"><div class="small muted">Operações totais</div><div class="stat-value">${state.trades.length}</div></div><div class="item"><div class="small muted">Win rate</div><div class="stat-value">${totals.winRate}%</div></div><div class="item"><div class="small muted">P/L acumulado</div><div class="stat-value">${currency(totals.pnl)}</div></div><div class="item"><div class="small muted">Profit factor</div><div class="stat-value">${totals.profitFactor}</div></div></div></div><div class="card"><h2 class="title">Setups ordenados por P/L</h2><div class="grid">${setups.length ? setups.map(item => `<div class="item between"><div><strong>${item.setup}</strong><div class="small muted" style="margin-top:8px;">${item.count} registos</div></div><div class="${item.pnl >= 0 ? 'text-green' : 'text-red'}"><strong>${currency(item.pnl)}</strong></div></div>`).join('') : '<div class="item list-empty">Adiciona trades reais para veres estatísticas.</div>'}</div></div></div>`;
+    }
+
+    function renderPricing() {
+      document.getElementById('pricing').innerHTML = `<div class="grid grid-2"><div class="card"><h2 class="title">Plano Gratuito</h2><p class="muted">✔ Até 2 contas</p><p class="muted">✔ Logbook completo</p><p class="muted">✔ Estatísticas básicas</p><p class="muted">✔ Uso ilimitado manual</p><p class="muted">✔ PWA instalável no telemóvel</p><button class="btn-outline full" disabled>Plano Atual</button></div><div class="card" style="background:linear-gradient(135deg,#18181b,#000); border-color: rgba(251,191,36,.25);"><h2 class="title" style="color:#fde68a;">Plano PRO</h2><div style="font-size:32px; font-weight:800; margin-bottom:16px;">€9,90/mês</div><p class="muted">✔ Contas ilimitadas</p><p class="muted">✔ Estatísticas avançadas</p><p class="muted">✔ Alertas inteligentes</p><p class="muted">✔ Histórico completo de saques</p><button id="stripeCheckoutBtn" class="btn-gold full">Ativar PRO agora</button></div></div>`;
+      document.getElementById('stripeCheckoutBtn').onclick = () => window.open(STRIPE_URL, '_blank');
+    }
+
+    function renderWithdrawals() {
+      const funded = state.accounts.filter(a => a.phase === 'Funded');
+      const options = funded.length ? funded.map(a => `<option value="${a.accountName}">${a.accountName}</option>`).join('') : '<option value="">Sem contas financiadas</option>';
+      const history = state.withdrawals.map(w => `<div class="item"><div class="between" style="align-items:flex-start;"><div><div class="row"><strong>${w.accountName}</strong><span class="badge badge-outline">${w.firm}</span><span class="badge ${w.status === 'Recebido' ? 'badge-green' : w.status === 'Pago' ? 'badge-blue' : 'badge-amber'}">${w.status}</span></div><p class="muted small" style="margin-top:8px;">${w.date}</p>${w.notes ? `<p>${w.notes}</p>` : ''}</div><div class="text-green"><strong>${currency(w.amount)}</strong></div></div></div>`).join('');
+      document.getElementById('withdrawals').innerHTML = `<div class="layout"><div class="card"><h2 class="title">Registar saque</h2><div class="field"><label>Conta financiada</label><select id="withdrawAccount">${options}</select></div><div class="field"><label>Data</label><input id="withdrawDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>Valor</label><input id="withdrawAmount" type="number" placeholder="Ex.: 1000"></div><div class="field"><label>Estado</label><select id="withdrawStatus"><option>Pedido</option><option>Pago</option><option>Recebido</option></select></div><div class="field"><label>Notas</label><textarea id="withdrawNotes" placeholder="Observações sobre o saque"></textarea></div><button id="saveWithdrawBtn" class="btn-white full">Guardar saque</button></div><div class="card"><h2 class="title">Histórico de saques</h2><div class="grid">${history || '<div class="item list-empty">Sem saques ainda.</div>'}</div></div></div>`;
+      document.getElementById('saveWithdrawBtn').onclick = () => {
+        if (!funded.length) return alert('Precisas de pelo menos uma conta financiada para registar saques.');
+        const accountName = document.getElementById('withdrawAccount').value;
+        const amount = document.getElementById('withdrawAmount').value;
+        if (!accountName || amount === '') return alert('Preenche conta e valor.');
+        const acc = state.accounts.find(a => a.accountName === accountName);
+        state.withdrawals.unshift({ id: Date.now(), accountName, firm: acc ? acc.firm : '', date: document.getElementById('withdrawDate').value, amount: Number(amount), status: document.getElementById('withdrawStatus').value, notes: document.getElementById('withdrawNotes').value.trim() });
+        state.accounts = state.accounts.map(a => a.accountName === accountName ? { ...a, totalWithdrawn: Number(a.totalWithdrawn || 0) + Number(amount) } : a);
+        saveCurrentUser(); renderAll();
+      };
+    }
+
+    function setActiveTab(tab) {
+      state.activeTab = tab;
+      document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+      document.getElementById(tab).classList.remove('hidden');
+    }
+
+    function renderAll() {
+      renderStatsGrid();
+      renderDashboard();
+      renderTrades();
+      renderAccounts();
+      renderStatsPage();
+      renderPricing();
+      renderWithdrawals();
+      setActiveTab(state.activeTab);
+      saveCurrentUser();
+      updateInstallUi();
+    }
+
+    function setupEvents() {
+      document.getElementById('enterAppBtn').onclick = () => {
+        document.getElementById('landingScreen').classList.add('hidden');
+        document.getElementById('authScreen').classList.remove('hidden');
+      };
+      document.getElementById('showLoginBtn').onclick = () => showAuthPanel('login');
+      document.getElementById('showRegisterBtn').onclick = () => showAuthPanel('register');
+      document.getElementById('showForgotBtn').onclick = () => showAuthPanel('forgot');
+      document.getElementById('backToLoginBtn').onclick = () => showAuthPanel('login');
+      document.getElementById('installBtnAuth').onclick = installApp;
+      document.getElementById('installBtnApp').onclick = installApp;
+
+      document.getElementById('registerBtn').onclick = () => {
+        const name = document.getElementById('registerName').value.trim();
+        const email = String(document.getElementById('registerEmail').value || '').trim().toLowerCase();
+        const password = document.getElementById('registerPassword').value;
+        const password2 = document.getElementById('registerPassword2').value;
+        if (!name || !email || !password) return alert('Preenche nome, email e password.');
+        if (password !== password2) return alert('As passwords não coincidem.');
+        const users = getUsers();
+        if (users[email]) return alert('Esse email já está registado neste browser.');
+        users[email] = defaultUserData(name, email, password);
+        setUsers(users);
+        setAuth(email);
+        loadCurrentUser();
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        renderAll();
+      };
+
+      document.getElementById('loginBtn').onclick = () => {
+        const email = String(document.getElementById('loginEmail').value || '').trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+        if (!email || !password) return alert('Preenche email e password.');
+        const users = getUsers();
+        if (!users[email]) return alert('Utilizador não encontrado neste browser. Usa Registar primeiro.');
+        if (users[email].password !== password) return alert('Password incorreta.');
+        setAuth(email);
+        loadCurrentUser();
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        renderAll();
+      };
+
+      document.getElementById('resetPasswordBtn').onclick = () => {
+        const email = String(document.getElementById('forgotEmail').value || '').trim().toLowerCase();
+        const password = document.getElementById('forgotPassword').value;
+        const password2 = document.getElementById('forgotPassword2').value;
+        if (!email || !password) return alert('Preenche email e nova password.');
+        if (password !== password2) return alert('As passwords não coincidem.');
+        const users = getUsers();
+        if (!users[email]) return alert('Não existe nenhuma conta com esse email neste browser.');
+        users[email].password = password;
+        setUsers(users);
+        alert('Password atualizada com sucesso.');
+        document.getElementById('loginEmail').value = email;
+        document.getElementById('loginPassword').value = '';
+        showAuthPanel('login');
+      };
+
+      document.getElementById('logoutBtn').onclick = () => {
+        state.isLoggedIn = false;
+        clearAuth();
+        document.getElementById('appScreen').classList.add('hidden');
+        document.getElementById('landingScreen').classList.remove('hidden');
+      };
+
+      document.getElementById('exportBtn').onclick = () => {
+        const payload = {
+          exportedAt: new Date().toISOString(),
+          user: { name: state.name, email: state.email },
+          isPro: state.isPro,
+          accounts: state.accounts,
+          trades: state.trades,
+          withdrawals: state.withdrawals
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'wolflog-pro-export.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      document.getElementById('proBtn').onclick = () => setActiveTab('pricing');
+      document.querySelectorAll('.tab').forEach(btn => { btn.onclick = () => setActiveTab(btn.dataset.tab); });
+    }
+
+    function boot() {
+      const auth = getAuth();
+      if (auth?.isLoggedIn && loadCurrentUser()) {
+        document.getElementById('landingScreen').classList.add('hidden');
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        renderAll();
+      } else {
+        document.getElementById('landingScreen').classList.remove('hidden');
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.add('hidden');
+        showAuthPanel('login');
+        updateInstallUi();
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      updateInstallUi();
+    });
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      updateInstallUi();
+    });
+
+    setupEvents();
+    boot();
+  </script>
+</body>
+</html>
