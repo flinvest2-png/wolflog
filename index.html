@@ -19,13 +19,11 @@
       --text: #ffffff;
       --muted: #a1a1aa;
       --gold: #e6c46a;
-      --gold-2: #7a5a1f;
       --green: #34d399;
       --red: #f87171;
       --blue: #60a5fa;
       --amber: #fbbf24;
     }
-
     * { box-sizing: border-box; }
     html, body { min-height: 100%; }
     body {
@@ -36,7 +34,6 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-
     .hidden { display: none !important; }
     .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
     .card {
@@ -60,7 +57,7 @@
     .logo-icon {
       width: 72px; height: 72px; border-radius: 24px; background: #000;
       display:flex; align-items:center; justify-content:center;
-      border:1px solid rgba(251,191,36,.2);
+      border:1px solid rgba(230,196,106,.2);
       box-shadow: 0 18px 50px rgba(0,0,0,.35);
       flex: 0 0 auto;
       overflow: hidden;
@@ -142,7 +139,6 @@
       color: #f5e6b0;
       font-size: 13px;
     }
-
     @media (max-width: 960px) {
       .layout { grid-template-columns: 1fr; }
       .tabs { grid-template-columns: repeat(3,1fr); position: static; }
@@ -300,10 +296,7 @@
   </div>
 
   <script>
-    const storageKeys = {
-      auth: 'wolflog_pro_auth',
-      users: 'wolflog_local_users'
-    };
+    const storageKeys = { auth: 'wolflog_pro_auth', users: 'wolflog_local_users' };
     const STRIPE_URL = 'https://buy.stripe.com/6oUbJ25AEgvR6ln27RaR200';
     let deferredPrompt = null;
 
@@ -322,43 +315,31 @@
       try { return JSON.parse(localStorage.getItem(storageKeys.users) || '{}'); }
       catch { return {}; }
     }
-
-    function setUsers(users) {
-      localStorage.setItem(storageKeys.users, JSON.stringify(users));
-    }
-
+    function setUsers(users) { localStorage.setItem(storageKeys.users, JSON.stringify(users)); }
     function getAuth() {
       try { return JSON.parse(localStorage.getItem(storageKeys.auth) || 'null'); }
       catch { return null; }
     }
-
-    function setAuth(email) {
-      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: true, email }));
-    }
-
-    function clearAuth() {
-      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: false, email: '' }));
-    }
-
+    function setAuth(email) { localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: true, email })); }
+    function clearAuth() { localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: false, email: '' })); }
     function currency(value) {
       return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(value || 0));
     }
-
-    function isIos() {
-      return /iphone|ipad|ipod/i.test(navigator.userAgent);
-    }
-
-    function isInStandaloneMode() {
-      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    }
+    function isIos() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+    function isInStandaloneMode() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
+    function defaultUserData(name, email, password) { return { profile: { name, email }, password, isPro: false, accounts: [], trades: [], withdrawals: [] }; }
 
     function updateInstallUi() {
       const standalone = isInStandaloneMode();
       const ios = isIos();
-      document.getElementById('installBtnAuth').classList.toggle('hidden', !deferredPrompt || standalone);
-      document.getElementById('installBtnApp').classList.toggle('hidden', !deferredPrompt || standalone);
-      document.getElementById('iosInstallNoteAuth').classList.toggle('hidden', !(ios && !standalone));
-      document.getElementById('iosInstallNoteApp').classList.toggle('hidden', !(ios && !standalone && state.isLoggedIn));
+      const a = document.getElementById('installBtnAuth');
+      const b = document.getElementById('installBtnApp');
+      const c = document.getElementById('iosInstallNoteAuth');
+      const d = document.getElementById('iosInstallNoteApp');
+      if (a) a.classList.toggle('hidden', !deferredPrompt || standalone);
+      if (b) b.classList.toggle('hidden', !deferredPrompt || standalone);
+      if (c) c.classList.toggle('hidden', !(ios && !standalone));
+      if (d) d.classList.toggle('hidden', !(ios && !standalone && state.isLoggedIn));
     }
 
     async function installApp() {
@@ -367,10 +348,6 @@
       try { await deferredPrompt.userChoice; } catch {}
       deferredPrompt = null;
       updateInstallUi();
-    }
-
-    function defaultUserData(name, email, password) {
-      return { profile: { name, email }, password, isPro: false, accounts: [], trades: [], withdrawals: [] };
     }
 
     function loadCurrentUser() {
@@ -499,7 +476,8 @@
         const account = document.getElementById('tradeAccount').value;
         if (!asset || result === '' || !account) return alert('Preenche ativo, conta e resultado.');
         state.trades.unshift({ id: Date.now(), date: document.getElementById('tradeDate').value, asset, side: document.getElementById('tradeSide').value, account, setup: document.getElementById('tradeSetup').value.trim(), result: Number(result), emotion: document.getElementById('tradeEmotion').value.trim(), notes: document.getElementById('tradeNotes').value.trim() });
-        saveCurrentUser(); renderAll();
+        saveCurrentUser();
+        renderAll();
       };
     }
 
@@ -514,9 +492,21 @@
       document.getElementById('accounts').innerHTML = `<div class="layout"><div class="card"><h2 class="title">Adicionar conta</h2><div class="field"><label>Modo de conta</label><div class="mode-switch"><button id="modeManual" class="mode-btn active">Manual<br><span class="small muted">Inserção manual de saldo e regras.</span></button><button id="modeApi" class="mode-btn">Ligação automática<br><span class="small muted">CSV, API ou leitura.</span></button></div></div><div id="apiFields" class="hidden"><div class="field"><label>Tipo de conexão</label><select id="accountConnectionType"><option value="csv">Importação CSV</option><option value="api">API</option><option value="read-only">Read-only / Investor</option></select></div><div class="field"><label>Plataforma</label><select id="accountPlatform"><option value="">Escolher plataforma</option><option>MT5</option><option>cTrader</option><option>DXtrade</option><option>Tradovate</option><option>MatchTrader</option></select></div></div><div class="field"><label>Prop firm</label><input id="accountFirm" placeholder="FTMO, Apex, 5ers..."></div><div class="field"><label>Fase</label><select id="accountPhase"><option>Challenge</option><option>Verification</option><option>Funded</option></select></div><div class="field hidden" id="payoutField"><label>Próxima data de saque</label><input id="accountPayoutDate" type="date"></div><div class="field"><label>Nome da conta</label><input id="accountName" placeholder="FTMO 100K"></div><div class="grid grid-2"><div class="field"><label>Saldo inicial</label><input id="accountInitialBalance" type="number"></div><div class="field"><label>Saldo atual</label><input id="accountCurrentBalance" type="number"></div></div><div class="grid grid-2"><div class="field"><label>Target</label><input id="accountTarget" type="number"></div><div class="field"><label>Loss diário</label><input id="accountDailyLoss" type="number"></div></div><div class="grid grid-2"><div class="field"><label>Drawdown total</label><input id="accountDrawdown" type="number"></div><div class="field"><label>Dias mínimos</label><input id="accountMinDays" type="number"></div></div><div class="field"><label>Dias feitos</label><input id="accountCompletedDays" type="number"></div><button id="saveAccountBtn" class="btn-white full">Guardar conta</button></div><div class="grid">${accountCards}</div></div>`;
 
       let mode = 'manual';
-      document.getElementById('modeManual').onclick = () => { mode = 'manual'; document.getElementById('modeManual').classList.add('active'); document.getElementById('modeApi').classList.remove('active'); document.getElementById('apiFields').classList.add('hidden'); };
-      document.getElementById('modeApi').onclick = () => { mode = 'api'; document.getElementById('modeApi').classList.add('active'); document.getElementById('modeManual').classList.remove('active'); document.getElementById('apiFields').classList.remove('hidden'); };
-      document.getElementById('accountPhase').onchange = (e) => { document.getElementById('payoutField').classList.toggle('hidden', e.target.value !== 'Funded'); };
+      document.getElementById('modeManual').onclick = () => {
+        mode = 'manual';
+        document.getElementById('modeManual').classList.add('active');
+        document.getElementById('modeApi').classList.remove('active');
+        document.getElementById('apiFields').classList.add('hidden');
+      };
+      document.getElementById('modeApi').onclick = () => {
+        mode = 'api';
+        document.getElementById('modeApi').classList.add('active');
+        document.getElementById('modeManual').classList.remove('active');
+        document.getElementById('apiFields').classList.remove('hidden');
+      };
+      document.getElementById('accountPhase').onchange = (e) => {
+        document.getElementById('payoutField').classList.toggle('hidden', e.target.value !== 'Funded');
+      };
       document.getElementById('saveAccountBtn').onclick = () => {
         const firm = document.getElementById('accountFirm').value.trim();
         const accountName = document.getElementById('accountName').value.trim();
@@ -525,7 +515,10 @@
         const phase = document.getElementById('accountPhase').value;
         const funded = phase === 'Funded';
         state.accounts.push({
-          id: Date.now(), firm, phase, accountName,
+          id: Date.now(),
+          firm,
+          phase,
+          accountName,
           initialBalance: Number(document.getElementById('accountInitialBalance').value || 0),
           currentBalance: Number(document.getElementById('accountCurrentBalance').value || 0),
           target: Number(document.getElementById('accountTarget').value || 0),
@@ -539,7 +532,8 @@
           totalWithdrawn: 0,
           nextPayoutDate: funded ? document.getElementById('accountPayoutDate').value : ''
         });
-        saveCurrentUser(); renderAll();
+        saveCurrentUser();
+        renderAll();
       };
 
       document.querySelectorAll('[data-delete-account]').forEach(btn => {
@@ -552,7 +546,8 @@
             state.trades = state.trades.filter(t => t.account !== acc.accountName);
             state.withdrawals = state.withdrawals.filter(w => w.accountName !== acc.accountName);
           }
-          saveCurrentUser(); renderAll();
+          saveCurrentUser();
+          renderAll();
         };
       });
     }
@@ -573,11 +568,169 @@
     function renderPricing() {
       document.getElementById('pricing').innerHTML = `<div class="grid grid-2"><div class="card"><h2 class="title">Plano Gratuito</h2><p class="muted">✔ Até 2 contas</p><p class="muted">✔ Logbook completo</p><p class="muted">✔ Estatísticas básicas</p><p class="muted">✔ Uso ilimitado manual</p><p class="muted">✔ PWA instalável no telemóvel</p><button class="btn-outline full" disabled>Plano Atual</button></div><div class="card" style="background:linear-gradient(135deg,#18181b,#000); border-color: rgba(251,191,36,.25);"><h2 class="title" style="color:#fde68a;">Plano PRO</h2><div style="font-size:32px; font-weight:800; margin-bottom:16px;">€9,90/mês</div><p class="muted">✔ Contas ilimitadas</p><p class="muted">✔ Estatísticas avançadas</p><p class="muted">✔ Alertas inteligentes</p><p class="muted">✔ Histórico completo de saques</p><button id="stripeCheckoutBtn" class="btn-gold full">Ativar PRO agora</button></div></div>`;
       document.getElementById('stripeCheckoutBtn').onclick = () => {
-  window.location.href = STRIPE_URL;
-};
+        window.location.href = STRIPE_URL;
+      };
     }
 
     function renderWithdrawals() {
       const funded = state.accounts.filter(a => a.phase === 'Funded');
       const options = funded.length ? funded.map(a => `<option value="${a.accountName}">${a.accountName}</option>`).join('') : '<option value="">Sem contas financiadas</option>';
-      const history = state.withdrawals.map(w => `<div class="item"><div class="between" style="align-items:flex-start;"><div><div class="row"><strong>${w.accountName}</strong><span class="badge badge-outline">${w.firm}</span><span class="badge ${w.status === 'Recebido' ? 'badge-green' : w.status === 'Pago' ? 'badge-blue' : 'badge-amber'}">${w.status}</span></div><p class="muted small"
+      const history = state.withdrawals.map(w => `<div class="item"><div class="between" style="align-items:flex-start;"><div><div class="row"><strong>${w.accountName}</strong><span class="badge badge-outline">${w.firm}</span><span class="badge ${w.status === 'Recebido' ? 'badge-green' : w.status === 'Pago' ? 'badge-blue' : 'badge-amber'}">${w.status}</span></div><p class="muted small" style="margin-top:8px;">${w.date}</p>${w.notes ? `<p>${w.notes}</p>` : ''}</div><div class="text-green"><strong>${currency(w.amount)}</strong></div></div></div>`).join('');
+      document.getElementById('withdrawals').innerHTML = `<div class="layout"><div class="card"><h2 class="title">Registar saque</h2><div class="field"><label>Conta financiada</label><select id="withdrawAccount">${options}</select></div><div class="field"><label>Data</label><input id="withdrawDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>Valor</label><input id="withdrawAmount" type="number" placeholder="Ex.: 1000"></div><div class="field"><label>Estado</label><select id="withdrawStatus"><option>Pedido</option><option>Pago</option><option>Recebido</option></select></div><div class="field"><label>Notas</label><textarea id="withdrawNotes" placeholder="Observações sobre o saque"></textarea></div><button id="saveWithdrawBtn" class="btn-white full">Guardar saque</button></div><div class="card"><h2 class="title">Histórico de saques</h2><div class="grid">${history || '<div class="item list-empty">Sem saques ainda.</div>'}</div></div></div>`;
+      document.getElementById('saveWithdrawBtn').onclick = () => {
+        if (!funded.length) return alert('Precisas de pelo menos uma conta financiada para registar saques.');
+        const accountName = document.getElementById('withdrawAccount').value;
+        const amount = document.getElementById('withdrawAmount').value;
+        if (!accountName || amount === '') return alert('Preenche conta e valor.');
+        const acc = state.accounts.find(a => a.accountName === accountName);
+        state.withdrawals.unshift({
+          id: Date.now(),
+          accountName,
+          firm: acc ? acc.firm : '',
+          date: document.getElementById('withdrawDate').value,
+          amount: Number(amount),
+          status: document.getElementById('withdrawStatus').value,
+          notes: document.getElementById('withdrawNotes').value.trim()
+        });
+        state.accounts = state.accounts.map(a => a.accountName === accountName ? { ...a, totalWithdrawn: Number(a.totalWithdrawn || 0) + Number(amount) } : a);
+        saveCurrentUser();
+        renderAll();
+      };
+    }
+
+    function setActiveTab(tab) {
+      state.activeTab = tab;
+      document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+      document.getElementById(tab).classList.remove('hidden');
+    }
+
+    function renderAll() {
+      renderStatsGrid();
+      renderDashboard();
+      renderTrades();
+      renderAccounts();
+      renderStatsPage();
+      renderPricing();
+      renderWithdrawals();
+      setActiveTab(state.activeTab);
+      saveCurrentUser();
+      updateInstallUi();
+    }
+
+    function setupEvents() {
+      document.getElementById('enterAppBtn').onclick = () => {
+        document.getElementById('landingScreen').classList.add('hidden');
+        document.getElementById('authScreen').classList.remove('hidden');
+      };
+      document.getElementById('showLoginBtn').onclick = () => showAuthPanel('login');
+      document.getElementById('showRegisterBtn').onclick = () => showAuthPanel('register');
+      document.getElementById('showForgotBtn').onclick = () => showAuthPanel('forgot');
+      document.getElementById('backToLoginBtn').onclick = () => showAuthPanel('login');
+      document.getElementById('installBtnAuth').onclick = installApp;
+      document.getElementById('installBtnApp').onclick = installApp;
+
+      document.getElementById('registerBtn').onclick = () => {
+        const name = document.getElementById('registerName').value.trim();
+        const email = String(document.getElementById('registerEmail').value || '').trim().toLowerCase();
+        const password = document.getElementById('registerPassword').value;
+        const password2 = document.getElementById('registerPassword2').value;
+        if (!name || !email || !password) return alert('Preenche nome, email e password.');
+        if (password !== password2) return alert('As passwords não coincidem.');
+        const users = getUsers();
+        if (users[email]) return alert('Esse email já está registado neste browser.');
+        users[email] = defaultUserData(name, email, password);
+        setUsers(users);
+        setAuth(email);
+        loadCurrentUser();
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        renderAll();
+      };
+
+      document.getElementById('loginBtn').onclick = () => {
+        const email = String(document.getElementById('loginEmail').value || '').trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+        if (!email || !password) return alert('Preenche email e password.');
+        const users = getUsers();
+        if (!users[email]) return alert('Utilizador não encontrado neste browser. Usa Registar primeiro.');
+        if (users[email].password !== password) return alert('Password incorreta.');
+        setAuth(email);
+        loadCurrentUser();
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        renderAll();
+      };
+
+      document.getElementById('resetPasswordBtn').onclick = () => {
+        const email = String(document.getElementById('forgotEmail').value || '').trim().toLowerCase();
+        const password = document.getElementById('forgotPassword').value;
+        const password2 = document.getElementById('forgotPassword2').value;
+        if (!email || !password) return alert('Preenche email e nova password.');
+        if (password !== password2) return alert('As passwords não coincidem.');
+        const users = getUsers();
+        if (!users[email]) return alert('Não existe nenhuma conta com esse email neste browser.');
+        users[email].password = password;
+        setUsers(users);
+        alert('Password atualizada com sucesso.');
+        document.getElementById('loginEmail').value = email;
+        document.getElementById('loginPassword').value = '';
+        showAuthPanel('login');
+      };
+
+      document.getElementById('logoutBtn').onclick = () => {
+        state.isLoggedIn = false;
+        clearAuth();
+        document.getElementById('appScreen').classList.add('hidden');
+        document.getElementById('landingScreen').classList.remove('hidden');
+      };
+
+      document.getElementById('exportBtn').onclick = () => {
+        const payload = {
+          exportedAt: new Date().toISOString(),
+          user: { name: state.name, email: state.email },
+          isPro: state.isPro,
+          accounts: state.accounts,
+          trades: state.trades,
+          withdrawals: state.withdrawals
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'wolflog-pro-export.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      document.getElementById('proBtn').onclick = () => setActiveTab('pricing');
+      document.querySelectorAll('.tab').forEach(btn => { btn.onclick = () => setActiveTab(btn.dataset.tab); });
+    }
+
+    function boot() {
+      const auth = getAuth();
+      if (auth?.isLoggedIn && loadCurrentUser()) {
+        document.getElementById('landingScreen').classList.add('hidden');
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        renderAll();
+      } else {
+        document.getElementById('landingScreen').classList.remove('hidden');
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.add('hidden');
+        showAuthPanel('login');
+        updateInstallUi();
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; updateInstallUi(); });
+    window.addEventListener('appinstalled', () => { deferredPrompt = null; updateInstallUi(); });
+
+    setupEvents();
+    boot();
+  </script>
+</body>
+</html>
