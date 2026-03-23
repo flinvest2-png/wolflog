@@ -220,8 +220,8 @@
       </div>
 
       <div class="row" style="justify-content:center; margin-bottom:18px;">
-        <button id="showLoginBtn" class="btn-white" style="width:auto; min-width:140px;">Entrar</button>
-        <button id="showRegisterBtn" class="btn-outline" style="width:auto; min-width:140px;">Registar</button>
+        <button id="showLoginBtn" class="btn-white" style="width:auto; min-width:140px;" onclick="document.getElementById('loginPanel').classList.remove('hidden');document.getElementById('registerPanel').classList.add('hidden');document.getElementById('forgotPanel').classList.add('hidden');this.className='btn-white';document.getElementById('showRegisterBtn').className='btn-outline';">Entrar</button>
+        <button id="showRegisterBtn" class="btn-outline" style="width:auto; min-width:140px;" onclick="document.getElementById('loginPanel').classList.add('hidden');document.getElementById('registerPanel').classList.remove('hidden');document.getElementById('forgotPanel').classList.add('hidden');this.className='btn-white';document.getElementById('showLoginBtn').className='btn-outline';">Registar</button>
       </div>
 
       <div id="loginPanel">
@@ -236,7 +236,7 @@
           <input id="loginPassword" type="password" placeholder="Password" />
         </div>
         <button id="loginBtn" class="btn-white full">Entrar</button>
-        <button id="showForgotBtn" class="btn-outline full" style="margin-top:10px;">Esqueci-me da password</button>
+        <button id="showForgotBtn" class="btn-outline full" style="margin-top:10px;" onclick="document.getElementById('loginPanel').classList.add('hidden');document.getElementById('registerPanel').classList.add('hidden');document.getElementById('forgotPanel').classList.remove('hidden');document.getElementById('showLoginBtn').className='btn-outline';document.getElementById('showRegisterBtn').className='btn-outline';">Esqueci-me da password</button>
         <button id="installBtnAuth" class="btn-gold full hidden" style="margin-top:10px;">Instalar app</button>
         <div id="iosInstallNoteAuth" class="install-note hidden">No iPhone: abre em Safari, toca em Partilhar e escolhe “Adicionar ao ecrã principal”.</div>
         <p class="small muted" style="text-align:center; margin-top:14px;">Versão local no browser, otimizada para desktop, Android e iPhone.</p>
@@ -280,7 +280,7 @@
           <input id="forgotPassword2" type="password" placeholder="Confirmar nova password" />
         </div>
         <button id="resetPasswordBtn" class="btn-gold full">Atualizar password</button>
-        <button id="backToLoginBtn" class="btn-outline full" style="margin-top:10px;">Voltar ao login</button>
+        <button id="backToLoginBtn" class="btn-outline full" style="margin-top:10px;" onclick="document.getElementById('loginPanel').classList.remove('hidden');document.getElementById('registerPanel').classList.add('hidden');document.getElementById('forgotPanel').classList.add('hidden');document.getElementById('showLoginBtn').className='btn-white';document.getElementById('showRegisterBtn').className='btn-outline';">Voltar ao login</button>
       </div>
     </div>
   </div>
