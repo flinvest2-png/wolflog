@@ -2,7 +2,12 @@
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#09090b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="WolfLog" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <title>WolfLog PRO</title>
   <style>
     :root {
@@ -12,8 +17,8 @@
       --border: rgba(255,255,255,0.08);
       --text: #ffffff;
       --muted: #a1a1aa;
-      --gold: #fbbf24;
-      --gold-2: #a16207;
+      --gold: #e6c46a;
+      --gold-2: #7a5a1f;
       --green: #34d399;
       --red: #f87171;
       --blue: #60a5fa;
@@ -21,11 +26,14 @@
     }
 
     * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: linear-gradient(to bottom, #09090b, #09090b, #000);
       color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     .hidden { display: none !important; }
     .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
@@ -52,6 +60,8 @@
       display:flex; align-items:center; justify-content:center;
       border:1px solid rgba(251,191,36,.2);
       box-shadow: 0 18px 50px rgba(0,0,0,.35);
+      flex: 0 0 auto;
+      overflow: hidden;
     }
     .logo-title { font-size: 38px; font-weight: 800; }
     .gold {
@@ -60,7 +70,7 @@
       background-clip: text;
       color: transparent;
     }
-    .logo-sub { text-transform: uppercase; letter-spacing: .28em; color: rgba(251,191,36,.72); font-size: 11px; }
+    .logo-sub { text-transform: uppercase; letter-spacing: .34em; color: rgba(251,191,36,.6); font-size: 10px; font-weight: 600; }
 
     input, select, textarea {
       width: 100%;
@@ -70,7 +80,8 @@
       color: #fff;
       border: 1px solid #333;
       border-radius: 10px;
-      font-size: 14px;
+      font-size: 16px;
+      min-height: 46px;
     }
     textarea { min-height: 100px; resize: vertical; }
     label { display: block; font-size: 14px; color: #ddd; }
@@ -82,10 +93,12 @@
       cursor: pointer;
       font-weight: 700;
       font-size: 14px;
+      min-height: 46px;
     }
     .btn-white { background: #fff; color: #000; }
     .btn-outline { background: transparent; color: #fff; border: 1px solid #444; }
     .btn-gold { background: var(--gold); color: #000; }
+    .btn-danger { background: #2a1111; color: #fca5a5; border: 1px solid rgba(248,113,113,.25); }
     .full { width: 100%; }
     .badge {
       display:inline-flex; align-items:center; gap:6px;
@@ -102,6 +115,7 @@
     .tabs {
       display:grid; grid-template-columns: repeat(6,1fr); gap: 6px;
       background: var(--bg-soft); padding: 6px; border-radius: 18px; margin-top: 26px;
+      position: sticky; top: 0; z-index: 10;
     }
     .tab {
       background: transparent; color: #fff; padding: 12px; border-radius: 12px; text-align:center;
@@ -132,40 +146,76 @@
     }
     .login-card { width:100%; max-width: 460px; }
     .top-actions { display:flex; gap:10px; flex-wrap:wrap; }
+    .list-empty { padding: 20px; text-align: center; color: var(--muted); }
+    .install-note {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(251,191,36,.08);
+      border: 1px solid rgba(251,191,36,.18);
+      color: #f5e6b0;
+      font-size: 13px;
+    }
 
     @media (max-width: 960px) {
       .layout { grid-template-columns: 1fr; }
-      .tabs { grid-template-columns: repeat(3,1fr); }
+      .tabs { grid-template-columns: repeat(3,1fr); position: static; }
       .logo-title { font-size: 30px; }
+      .between.mobile-stack { flex-direction: column; align-items: flex-start; }
     }
     @media (max-width: 640px) {
       .tabs { grid-template-columns: repeat(2,1fr); }
-      .container { padding: 14px; }
+      .container { padding: 14px; padding-bottom: 24px; }
+      .logo-wrap { align-items: flex-start; }
+      .logo-icon { width: 60px; height: 60px; border-radius: 20px; }
+      .logo-title { font-size: 28px; }
+      .card { padding: 16px; border-radius: 18px; }
+      .top-actions { width: 100%; }
+      .top-actions button { flex: 1 1 100%; }
+      .stat-value { font-size: 24px; }
     }
   </style>
 </head>
 <body>
-  <div id="authScreen" class="login-shell">
-    <div class="card login-card">
+  <div id="landingScreen" class="login-shell">
+    <div class="card login-card" style="text-align:center;">
       <div class="logo-wrap" style="justify-content:center; margin-bottom:20px;">
         <div class="logo-icon">
-          <svg viewBox="0 0 120 120" width="44" height="44" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 70C30 40 55 20 85 18C75 28 72 35 72 35C85 32 98 38 105 48C95 50 88 58 82 68C75 80 55 95 30 100L20 70Z" fill="url(#goldMain)" />
-            <path d="M25 85C45 95 75 90 105 60" stroke="url(#goldStrong)" stroke-width="6" stroke-linecap="round" />
-            <circle cx="75" cy="48" r="2.5" fill="#000" />
-            <defs>
-              <linearGradient id="goldMain" x1="20" y1="18" x2="105" y2="100" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#FDE68A" /><stop offset="0.5" stop-color="#FBBF24" /><stop offset="1" stop-color="#A16207" />
-              </linearGradient>
-              <linearGradient id="goldStrong" x1="25" y1="60" x2="105" y2="95" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#FBBF24" /><stop offset="1" stop-color="#78350F" />
-              </linearGradient>
-            </defs>
+          <svg viewBox="0 0 120 120" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="8" width="104" height="104" rx="18" fill="none" stroke="#e6c46a" stroke-width="1.5"/>
+            <text x="50%" y="55%" text-anchor="middle" fill="#e6c46a" font-size="40" font-family="Inter, sans-serif" font-weight="600" letter-spacing="4">WL</text>
           </svg>
         </div>
         <div>
           <div class="logo-title">Wolf<span class="gold">Log</span></div>
-          <div class="logo-sub">Trading Intelligence</div>
+          <div class="logo-sub">Performance Tracking System</div>
+        </div>
+      </div>
+      <h2 style="font-size:26px; margin-bottom:10px;">Domina a tua performance de trading</h2>
+      <p class="muted" style="margin-bottom:20px;">Regista. Analisa. Evolui. Como um profissional.</p>
+      <button id="enterAppBtn" class="btn-gold full">Entrar na plataforma</button>
+    </div>
+  </div>
+
+  <div id="authScreen" class="login-shell hidden">
+    <div class="card login-card">
+      <div class="logo-wrap" style="justify-content:center; margin-bottom:20px;">
+        <div class="logo-icon" id="authLogoIcon">
+          <svg viewBox="0 0 120 120" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldElite" x1="0" y1="0" x2="120" y2="120">
+      <stop offset="0%" stop-color="#fef9c3"/>
+      <stop offset="50%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#713f12"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="104" height="104" rx="18" fill="none" stroke="url(#goldElite)" stroke-width="1.5"/>
+  <text x="50%" y="55%" text-anchor="middle" fill="url(#goldElite)" font-size="40" font-family="Inter, sans-serif" font-weight="600" letter-spacing="4">WL</text>
+</svg>
+        </div>
+        <div>
+          <div class="logo-title">Wolf<span class="gold">Log</span></div>
+          <div class="logo-sub">Performance Tracking System</div>
         </div>
       </div>
 
@@ -186,12 +236,15 @@
           <input id="loginPassword" type="password" placeholder="Password" />
         </div>
         <button id="loginBtn" class="btn-white full">Entrar</button>
-        <p class="small muted" style="text-align:center; margin-top:14px;">Modo atual: autenticação local no browser. Cada utilizador fica guardado apenas neste dispositivo.</p>
+        <button id="showForgotBtn" class="btn-outline full" style="margin-top:10px;">Esqueci-me da password</button>
+        <button id="installBtnAuth" class="btn-gold full hidden" style="margin-top:10px;">Instalar app</button>
+        <div id="iosInstallNoteAuth" class="install-note hidden">No iPhone: abre em Safari, toca em Partilhar e escolhe “Adicionar ao ecrã principal”.</div>
+        <p class="small muted" style="text-align:center; margin-top:14px;">Versão local no browser, otimizada para desktop, Android e iPhone.</p>
       </div>
 
       <div id="registerPanel" class="hidden">
         <h2 style="text-align:center; font-size:28px; margin-bottom:8px;">Criar conta WolfLog</h2>
-        <p class="muted" style="text-align:center; margin-bottom:20px;">Registo local para testar a app final antes da versão cloud.</p>
+        <p class="muted" style="text-align:center; margin-bottom:20px;">A conta começa vazia. Só aparecem dados reais inseridos por ti.</p>
         <div class="field">
           <label>Nome</label>
           <input id="registerName" placeholder="O teu nome" />
@@ -209,40 +262,58 @@
           <input id="registerPassword2" type="password" placeholder="Confirmar password" />
         </div>
         <button id="registerBtn" class="btn-gold full">Criar conta</button>
-        <p class="small muted" style="text-align:center; margin-top:14px;">O registo cria um utilizador local e separa os dados por email neste browser.</p>
+      </div>
+
+      <div id="forgotPanel" class="hidden">
+        <h2 style="text-align:center; font-size:28px; margin-bottom:8px;">Recuperar password</h2>
+        <p class="muted" style="text-align:center; margin-bottom:20px;">Nesta versão local, a password é atualizada neste dispositivo.</p>
+        <div class="field">
+          <label>Email</label>
+          <input id="forgotEmail" placeholder="Email da conta" />
+        </div>
+        <div class="field">
+          <label>Nova password</label>
+          <input id="forgotPassword" type="password" placeholder="Nova password" />
+        </div>
+        <div class="field">
+          <label>Confirmar nova password</label>
+          <input id="forgotPassword2" type="password" placeholder="Confirmar nova password" />
+        </div>
+        <button id="resetPasswordBtn" class="btn-gold full">Atualizar password</button>
+        <button id="backToLoginBtn" class="btn-outline full" style="margin-top:10px;">Voltar ao login</button>
       </div>
     </div>
   </div>
 
   <div id="appScreen" class="hidden">
     <div class="container">
-      <div class="between" style="align-items:flex-start; margin-bottom:18px;">
+      <div class="between mobile-stack" style="align-items:flex-start; margin-bottom:18px;">
         <div>
           <div class="logo-wrap">
-            <div class="logo-icon">
-              <svg viewBox="0 0 120 120" width="52" height="52" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 70C30 40 55 20 85 18C75 28 72 35 72 35C85 32 98 38 105 48C95 50 88 58 82 68C75 80 55 95 30 100L20 70Z" fill="url(#goldMain2)" />
-                <path d="M25 85C45 95 75 90 105 60" stroke="url(#goldStrong2)" stroke-width="6" stroke-linecap="round" />
-                <circle cx="75" cy="48" r="2.5" fill="#000" />
-                <defs>
-                  <linearGradient id="goldMain2" x1="20" y1="18" x2="105" y2="100" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#FDE68A" /><stop offset="0.5" stop-color="#FBBF24" /><stop offset="1" stop-color="#A16207" />
-                  </linearGradient>
-                  <linearGradient id="goldStrong2" x1="25" y1="60" x2="105" y2="95" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#FBBF24" /><stop offset="1" stop-color="#78350F" />
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div class="logo-icon" id="appLogoIcon">
+              <svg viewBox="0 0 120 120" width="52" height="52" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldElite2" x1="0" y1="0" x2="120" y2="120">
+      <stop offset="0%" stop-color="#fef9c3"/>
+      <stop offset="50%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#713f12"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="104" height="104" rx="18" fill="none" stroke="url(#goldElite2)" stroke-width="1.5"/>
+  <text x="50%" y="55%" text-anchor="middle" fill="url(#goldElite2)" font-size="46" font-family="Inter, sans-serif" font-weight="600" letter-spacing="4">WL</text>
+</svg>
             </div>
             <div>
               <div class="logo-title">Wolf<span class="gold">Log</span></div>
-              <div class="logo-sub">Trading Intelligence</div>
+              <div class="logo-sub">Performance Tracking System</div>
             </div>
           </div>
-          <p class="muted" style="max-width:760px; margin-top:14px;">Versão PRO com dashboard, trades, contas de avaliação vs financiadas, registo local por utilizador e histórico completo de saques.</p>
+          <p class="muted" style="max-width:760px; margin-top:14px;">App de registo de trading com contas manuais ou por API, trades, saques e estatísticas reais. Preparada para uso em computador e telemóvel.</p>
           <p id="currentUserLabel" class="small muted" style="margin-top:10px;"></p>
+          <div id="iosInstallNoteApp" class="install-note hidden">No iPhone: abre em Safari, toca em Partilhar e escolhe “Adicionar ao ecrã principal”.</div>
         </div>
         <div class="top-actions">
+          <button id="installBtnApp" class="btn-gold hidden">Instalar app</button>
           <button id="proBtn" class="btn-white">Upgrade Pro</button>
           <button id="exportBtn" class="btn-outline">Exportar dados</button>
           <button id="logoutBtn" class="btn-outline">Sair</button>
@@ -265,654 +336,34 @@
       <div id="accounts" class="tab-panel hidden"></div>
       <div id="stats" class="tab-panel hidden"></div>
       <div id="pricing" class="tab-panel hidden"></div>
-      <div id="withdrawals" class="tab-panel hidden"></div>
+<script>
+function renderPricing() {
+  const STRIPE_URL = 'https://buy.stripe.com/6oUbJ25AEgvR6Ln27RaR200';
+  document.getElementById('pricing').innerHTML = `
+    <div class="grid grid-2">
+      <div class="card">
+        <h2 class="title">Plano Gratuito</h2>
+        <p class="muted">✔ Até 2 contas</p>
+        <p class="muted">✔ Logbook completo</p>
+        <p class="muted">✔ Estatísticas básicas</p>
+        <p class="muted">✔ Uso ilimitado manual</p>
+        <p class="muted">✔ PWA instalável no telemóvel</p>
+        <button class="btn-outline full" disabled>Plano Atual</button>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,#18181b,#000); border-color: rgba(251,191,36,.25);">
+        <h2 class="title" style="color:#fde68a;">Plano PRO</h2>
+        <div style="font-size:32px; font-weight:800; margin-bottom:16px;">€9,90/mês</div>
+        <p class="muted">✔ Contas ilimitadas</p>
+        <p class="muted">✔ Estatísticas avançadas</p>
+        <p class="muted">✔ Alertas inteligentes</p>
+        <p class="muted">✔ Histórico completo de saques</p>
+        <button id="stripeCheckoutBtn" class="btn-gold full">Ativar PRO agora</button>
+      </div>
     </div>
-  </div>
+  `;
 
-  <script>
-    const storageKeys = {
-      auth: 'wolflog_pro_auth',
-      users: 'wolflog_local_users',
-      activeUser: 'wolflog_active_user'
-    };
-
-    const initialAccounts = [
-      {
-        id: 1, firm: 'FTMO', phase: 'Challenge', accountName: 'FTMO 100K', initialBalance: 100000,
-        currentBalance: 103250, target: 10000, dailyLossLimit: 5000, overallDrawdown: 10000,
-        minTradingDays: 4, completedDays: 3, mode: 'manual', connectionType: 'manual', platform: '',
-        isEvaluation: true, payoutEligible: false, totalWithdrawn: 0, nextPayoutDate: ''
-      },
-      {
-        id: 2, firm: 'Apex', phase: 'Funded', accountName: 'Apex 50K', initialBalance: 50000,
-        currentBalance: 51240, target: 3000, dailyLossLimit: 2500, overallDrawdown: 3000,
-        minTradingDays: 0, completedDays: 18, mode: 'api', connectionType: 'csv', platform: 'Tradovate',
-        isEvaluation: false, payoutEligible: true, totalWithdrawn: 1800, nextPayoutDate: '2026-03-28'
-      }
-    ];
-
-    const initialTrades = [
-      { id: 1, date: '2026-03-03', asset: 'EURUSD', side: 'Buy', account: 'FTMO 100K', setup: 'Breakout', result: 420, emotion: 'Calmo', notes: 'Entrada limpa na abertura de Londres.' },
-      { id: 2, date: '2026-03-04', asset: 'XAUUSD', side: 'Sell', account: 'Apex 50K', setup: 'Reversão', result: -180, emotion: 'Impaciente', notes: 'Entrei cedo demais.' },
-      { id: 3, date: '2026-03-05', asset: 'NAS100', side: 'Buy', account: 'FTMO 100K', setup: 'Pullback', result: 650, emotion: 'Confiante', notes: 'Boa execução e saída parcial.' }
-    ];
-
-    const initialWithdrawals = [
-      { id: 1, accountName: 'Apex 50K', firm: 'Apex', date: '2026-02-18', amount: 1200, status: 'Recebido', notes: 'Primeiro saque da conta financiada.' },
-      { id: 2, accountName: 'Apex 50K', firm: 'Apex', date: '2026-03-02', amount: 600, status: 'Pago', notes: 'Saque intermédio.' }
-    ];
-
-    let state = {
-      isLoggedIn: false,
-      email: '',
-      name: '',
-      isPro: false,
-      accounts: [],
-      trades: [],
-      withdrawals: [],
-      activeTab: 'dashboard',
-      authMode: 'login'
-    };
-
-    function currency(value) {
-      return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value || 0);
-    }
-
-    function slugEmail(email) {
-      return String(email || '').trim().toLowerCase();
-    }
-
-    function defaultUserData(name = '', email = '') {
-      return {
-        profile: { name, email },
-        isPro: false,
-        accounts: JSON.parse(JSON.stringify(initialAccounts)),
-        trades: JSON.parse(JSON.stringify(initialTrades)),
-        withdrawals: JSON.parse(JSON.stringify(initialWithdrawals))
-      };
-    }
-
-    function getAllUsers() {
-      try {
-        return JSON.parse(localStorage.getItem(storageKeys.users) || '{}');
-      } catch (e) {
-        return {};
-      }
-    }
-
-    function saveAllUsers(users) {
-      localStorage.setItem(storageKeys.users, JSON.stringify(users));
-    }
-
-    function getCurrentUserData() {
-      const key = slugEmail(state.email);
-      const users = getAllUsers();
-      return users[key] || null;
-    }
-
-    function saveCurrentUserData() {
-      const key = slugEmail(state.email);
-      if (!key) return;
-      const users = getAllUsers();
-      users[key] = {
-        profile: { name: state.name, email: state.email },
-        isPro: state.isPro,
-        accounts: state.accounts,
-        trades: state.trades,
-        withdrawals: state.withdrawals
-      };
-      saveAllUsers(users);
-      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: state.isLoggedIn, email: state.email }));
-      localStorage.setItem(storageKeys.activeUser, key);
-    }
-
-    function loadActiveUser() {
-      const key = slugEmail(state.email || JSON.parse(localStorage.getItem(storageKeys.auth) || '{}').email || '');
-      const users = getAllUsers();
-      if (!key || !users[key]) return false;
-      const user = users[key];
-      state.email = user.profile.email;
-      state.name = user.profile.name || '';
-      state.isPro = !!user.isPro;
-      state.accounts = user.accounts || [];
-      state.trades = user.trades || [];
-      state.withdrawals = user.withdrawals || [];
-      return true;
-    }
-
-    function switchAuthMode(mode) {
-      state.authMode = mode;
-      document.getElementById('loginPanel').classList.toggle('hidden', mode !== 'login');
-      document.getElementById('registerPanel').classList.toggle('hidden', mode !== 'register');
-      document.getElementById('showLoginBtn').className = mode === 'login' ? 'btn-white' : 'btn-outline';
-      document.getElementById('showRegisterBtn').className = mode === 'register' ? 'btn-white' : 'btn-outline';
-    }
-
-    function getTotals() {
-      const totalBalance = state.accounts.reduce((sum, a) => sum + a.currentBalance, 0);
-      const pnl = state.trades.reduce((sum, t) => sum + t.result, 0);
-      const wins = state.trades.filter(t => t.result > 0);
-      const losses = state.trades.filter(t => t.result < 0);
-      const fundedAccounts = state.accounts.filter(a => a.phase === 'Funded').length;
-      const evaluationAccounts = state.accounts.filter(a => a.phase !== 'Funded').length;
-      const totalWithdrawn = state.withdrawals.reduce((sum, w) => sum + w.amount, 0);
-      const winRate = state.trades.length ? Math.round((wins.length / state.trades.length) * 100) : 0;
-      const grossProfit = wins.reduce((sum, t) => sum + t.result, 0);
-      const grossLoss = Math.abs(losses.reduce((sum, t) => sum + t.result, 0));
-      const profitFactor = grossLoss ? (grossProfit / grossLoss).toFixed(2) : '—';
-      return { totalBalance, pnl, fundedAccounts, evaluationAccounts, totalWithdrawn, winRate, profitFactor };
-    }
-
-    function getAlerts() {
-      const items = [];
-      state.accounts.forEach(a => {
-        const gain = a.currentBalance - a.initialBalance;
-        const targetProgress = a.target ? Math.max(0, Math.min(100, (gain / a.target) * 100)) : 0;
-        const ddRemaining = a.overallDrawdown - Math.max(0, a.initialBalance - a.currentBalance);
-        if (a.phase !== 'Funded' && targetProgress >= 80 && targetProgress < 100) items.push({ type: 'green', text: `${a.accountName}: estás a ${Math.round(targetProgress)}% do target.` });
-        if (a.overallDrawdown > 0 && ddRemaining <= a.overallDrawdown * 0.2) items.push({ type: 'red', text: `${a.accountName}: atenção ao drawdown total.` });
-        if (a.phase !== 'Funded' && a.completedDays < a.minTradingDays) items.push({ type: 'amber', text: `${a.accountName}: faltam ${a.minTradingDays - a.completedDays} dias mínimos.` });
-        if (a.phase === 'Funded' && a.nextPayoutDate) items.push({ type: 'blue', text: `${a.accountName}: próximo saque em ${a.nextPayoutDate}.` });
-      });
-      if (!items.length) items.push({ type: 'muted', text: 'Tudo sob controlo. Continua disciplinado.' });
-      return items.slice(0, 6);
-    }
-
-    function renderStatsGrid() {
-      const totals = getTotals();
-      const cards = [
-        { t: 'Saldo total', v: currency(totals.totalBalance), s: 'Todas as contas' },
-        { t: 'Contas em avaliação', v: String(totals.evaluationAccounts), s: 'Challenge + Verification' },
-        { t: 'Contas financiadas', v: String(totals.fundedAccounts), s: 'Prontas para sacar' },
-        { t: 'P/L acumulado', v: currency(totals.pnl), s: 'Baseado no journal' },
-        { t: 'Total sacado', v: currency(totals.totalWithdrawn), s: 'Histórico de payouts' },
-        { t: 'Profit factor', v: String(totals.profitFactor), s: 'Relação lucro/perda' }
-      ];
-      document.getElementById('statsGrid').innerHTML = cards.map(c => `
-        <div class="card">
-          <p class="muted">${c.t}</p>
-          <p class="stat-value">${c.v}</p>
-          <p class="small muted">${c.s}</p>
-        </div>
-      `).join('');
-      document.getElementById('proBtn').textContent = state.isPro ? 'Plano PRO ativo' : 'Upgrade Pro';
-      document.getElementById('currentUserLabel').textContent = `Utilizador atual: ${state.name || 'Sem nome'} · ${state.email}`;
-    }
-
-    function renderDashboard() {
-      const alerts = getAlerts();
-      const accountsHtml = state.accounts.map(account => {
-        const gain = account.currentBalance - account.initialBalance;
-        const targetProgress = account.target ? Math.max(0, Math.min(100, (gain / account.target) * 100)) : 0;
-        return `
-          <div class="item">
-            <div class="between" style="align-items:flex-start;">
-              <div>
-                <div class="row">
-                  <strong>${account.accountName}</strong>
-                  <span class="badge badge-dark">${account.phase}</span>
-                  <span class="badge badge-outline">${account.firm}</span>
-                </div>
-                <p class="muted small" style="margin-top:8px;">Saldo atual: ${currency(account.currentBalance)} · ${account.phase === 'Funded' ? `Total sacado: ${currency(account.totalWithdrawn)}` : `Target: ${currency(account.target)}`}</p>
-                <div class="row" style="margin-top:8px;">
-                  <span class="badge ${account.phase === 'Funded' ? 'badge-green' : 'badge-amber'}">${account.phase === 'Funded' ? 'Conta financiada' : 'Conta em avaliação'}</span>
-                  ${account.phase === 'Funded' && account.nextPayoutDate ? `<span class="badge badge-outline">Próximo saque: ${account.nextPayoutDate}</span>` : ''}
-                </div>
-              </div>
-              <div class="small muted">Dias mínimos: ${account.completedDays}/${account.minTradingDays}</div>
-            </div>
-            ${account.phase !== 'Funded' ? `
-              <div style="margin-top:14px;">
-                <div class="between"><span class="small muted">Progresso para o target</span><span class="small muted">${Math.round(targetProgress)}%</span></div>
-                <div class="progress"><span style="width:${targetProgress}%"></span></div>
-              </div>
-            ` : ''}
-          </div>
-        `;
-      }).join('');
-
-      const alertsHtml = alerts.map(alert => `
-        <div class="item"><span class="badge ${alert.type === 'red' ? 'badge-red' : alert.type === 'green' ? 'badge-green' : alert.type === 'amber' ? 'badge-amber' : alert.type === 'blue' ? 'badge-blue' : 'badge-outline'}">${alert.text}</span></div>
-      `).join('');
-
-      document.getElementById('dashboard').innerHTML = `
-        <div class="grid grid-2">
-          <div class="card">
-            <h2 class="title">Contas ativas</h2>
-            <div class="grid">${accountsHtml}</div>
-          </div>
-          <div class="card">
-            <h2 class="title">Alertas inteligentes</h2>
-            <div class="grid">${alertsHtml}</div>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderTrades() {
-      const accountOptions = state.accounts.map(a => `<option value="${a.accountName}">${a.accountName}</option>`).join('');
-      const list = state.trades.map(trade => `
-        <div class="item">
-          <div class="between" style="align-items:flex-start;">
-            <div>
-              <div class="row">
-                <strong>${trade.asset}</strong>
-                <span class="badge badge-dark">${trade.side}</span>
-                ${trade.setup ? `<span class="badge badge-outline">${trade.setup}</span>` : ''}
-              </div>
-              <p class="muted small" style="margin-top:8px;">${trade.date} · ${trade.account}</p>
-              ${trade.emotion ? `<p class="small muted">Estado emocional: ${trade.emotion}</p>` : ''}
-              ${trade.notes ? `<p>${trade.notes}</p>` : ''}
-            </div>
-            <div class="${trade.result >= 0 ? 'text-green' : 'text-red'}"><strong>${currency(trade.result)}</strong></div>
-          </div>
-        </div>
-      `).join('');
-
-      document.getElementById('trades').innerHTML = `
-        <div class="layout">
-          <div class="card">
-            <h2 class="title">Nova operação</h2>
-            <div class="field"><label>Data</label><input id="tradeDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
-            <div class="field"><label>Ativo</label><input id="tradeAsset" placeholder="EURUSD, XAUUSD, NAS100..."></div>
-            <div class="field"><label>Direção</label><select id="tradeSide"><option>Buy</option><option>Sell</option></select></div>
-            <div class="field"><label>Conta</label><select id="tradeAccount">${accountOptions}</select></div>
-            <div class="field"><label>Setup</label><input id="tradeSetup" placeholder="Breakout, Pullback..."></div>
-            <div class="field"><label>Resultado</label><input id="tradeResult" type="number" placeholder="Ex.: 250 ou -120"></div>
-            <div class="field"><label>Emoção</label><input id="tradeEmotion" placeholder="Calmo, confiante, ansioso..."></div>
-            <div class="field"><label>Notas</label><textarea id="tradeNotes" placeholder="Porque entraste? O que correu bem ou mal?"></textarea></div>
-            <button id="saveTradeBtn" class="btn-white full">Guardar trade</button>
-          </div>
-          <div class="card">
-            <h2 class="title">Journal de operações</h2>
-            <div class="grid">${list || '<p class="muted">Sem trades ainda.</p>'}</div>
-          </div>
-        </div>
-      `;
-
-      document.getElementById('saveTradeBtn').onclick = () => {
-        const asset = document.getElementById('tradeAsset').value.trim();
-        const result = document.getElementById('tradeResult').value;
-        if (!asset || result === '') return alert('Preenche ativo e resultado.');
-        state.trades.unshift({
-          id: Date.now(),
-          date: document.getElementById('tradeDate').value,
-          asset,
-          side: document.getElementById('tradeSide').value,
-          account: document.getElementById('tradeAccount').value,
-          setup: document.getElementById('tradeSetup').value,
-          result: Number(result),
-          emotion: document.getElementById('tradeEmotion').value,
-          notes: document.getElementById('tradeNotes').value
-        });
-        saveCurrentUserData();
-        renderAll();
-      };
-    }
-
-    function renderAccounts() {
-      const accountCards = state.accounts.map(account => {
-        const pnl = account.currentBalance - account.initialBalance;
-        const drawdownUsed = Math.max(0, account.initialBalance - account.currentBalance);
-        const ddProgress = account.overallDrawdown ? Math.min(100, (drawdownUsed / account.overallDrawdown) * 100) : 0;
-        return `
-          <div class="card">
-            <div class="between" style="align-items:flex-start;">
-              <div>
-                <div class="row">
-                  <strong style="font-size:20px;">${account.accountName}</strong>
-                  <span class="badge badge-dark">${account.phase}</span>
-                </div>
-                <p class="muted small" style="margin-top:8px;">${account.firm}</p>
-                <div class="row" style="margin-top:8px;">
-                  <span class="badge ${account.phase === 'Funded' ? 'badge-green' : 'badge-amber'}">${account.phase === 'Funded' ? 'Financiada' : 'Teste / Avaliação'}</span>
-                  ${account.phase === 'Funded' && account.nextPayoutDate ? `<span class="badge badge-outline">Próximo saque: ${account.nextPayoutDate}</span>` : ''}
-                </div>
-                <div class="row" style="margin-top:8px;">
-                  <span class="badge badge-outline">${account.mode === 'api' ? 'Ligação automática' : 'Manual'}</span>
-                  ${account.mode === 'api' ? `<span class="badge badge-amber">${account.connectionType === 'api' ? 'API' : account.connectionType === 'read-only' ? 'Read-only' : 'CSV'}</span>` : ''}
-                  ${account.platform ? `<span class="badge badge-outline">${account.platform}</span>` : ''}
-                </div>
-              </div>
-              <div class="${pnl >= 0 ? 'text-green' : 'text-red'}"><strong>${currency(pnl)}</strong></div>
-            </div>
-            <div class="grid grid-2" style="margin-top:14px;">
-              <div class="item"><div class="small muted">Saldo atual</div><div style="margin-top:8px;"><strong>${currency(account.currentBalance)}</strong></div></div>
-              <div class="item"><div class="small muted">${account.phase === 'Funded' ? 'Sacado' : 'Target'}</div><div style="margin-top:8px;"><strong>${account.phase === 'Funded' ? currency(account.totalWithdrawn) : currency(account.target)}</strong></div></div>
-              <div class="item"><div class="small muted">Loss diário</div><div style="margin-top:8px;"><strong>${currency(account.dailyLossLimit)}</strong></div></div>
-              <div class="item"><div class="small muted">Dias</div><div style="margin-top:8px;"><strong>${account.completedDays}/${account.minTradingDays}</strong></div></div>
-            </div>
-            <div style="margin-top:14px;">
-              <div class="between"><span class="small muted">Uso do drawdown total</span><span class="small muted">${Math.round(ddProgress)}%</span></div>
-              <div class="progress"><span style="width:${ddProgress}%"></span></div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      document.getElementById('accounts').innerHTML = `
-        <div class="layout">
-          <div class="card">
-            <h2 class="title">Adicionar conta</h2>
-            <div class="field">
-              <label>Modo de conta</label>
-              <div class="mode-switch">
-                <button id="modeManual" class="mode-btn active">Manual<br><span class="small muted">Inserção manual de saldo e regras.</span></button>
-                <button id="modeApi" class="mode-btn">Ligação automática<br><span class="small muted">CSV, API ou leitura.</span></button>
-              </div>
-            </div>
-            <div id="apiFields" class="hidden">
-              <div class="field"><label>Tipo de conexão</label><select id="accountConnectionType"><option value="csv">Importação CSV</option><option value="api">API</option><option value="read-only">Read-only / Investor</option></select></div>
-              <div class="field"><label>Plataforma</label><select id="accountPlatform"><option value="">Escolher plataforma</option><option>MT5</option><option>cTrader</option><option>DXtrade</option><option>Tradovate</option><option>MatchTrader</option></select></div>
-            </div>
-            <div class="field"><label>Prop firm</label><input id="accountFirm" placeholder="FTMO, Apex, 5ers..."></div>
-            <div class="field"><label>Fase</label><select id="accountPhase"><option>Challenge</option><option>Verification</option><option>Funded</option></select></div>
-            <div class="field hidden" id="payoutField"><label>Próxima data de saque</label><input id="accountPayoutDate" type="date"></div>
-            <div class="field"><label>Nome da conta</label><input id="accountName" placeholder="FTMO 100K"></div>
-            <div class="grid grid-2">
-              <div class="field"><label>Saldo inicial</label><input id="accountInitialBalance" type="number"></div>
-              <div class="field"><label>Saldo atual</label><input id="accountCurrentBalance" type="number"></div>
-            </div>
-            <div class="grid grid-2">
-              <div class="field"><label>Target</label><input id="accountTarget" type="number"></div>
-              <div class="field"><label>Loss diário</label><input id="accountDailyLoss" type="number"></div>
-            </div>
-            <div class="grid grid-2">
-              <div class="field"><label>Drawdown total</label><input id="accountDrawdown" type="number"></div>
-              <div class="field"><label>Dias mínimos</label><input id="accountMinDays" type="number"></div>
-            </div>
-            <div class="field"><label>Dias feitos</label><input id="accountCompletedDays" type="number"></div>
-            <button id="saveAccountBtn" class="btn-white full">Guardar conta</button>
-          </div>
-          <div class="grid">${accountCards}</div>
-        </div>
-      `;
-
-      let mode = 'manual';
-      document.getElementById('modeManual').onclick = () => {
-        mode = 'manual';
-        document.getElementById('modeManual').classList.add('active');
-        document.getElementById('modeApi').classList.remove('active');
-        document.getElementById('apiFields').classList.add('hidden');
-      };
-      document.getElementById('modeApi').onclick = () => {
-        mode = 'api';
-        document.getElementById('modeApi').classList.add('active');
-        document.getElementById('modeManual').classList.remove('active');
-        document.getElementById('apiFields').classList.remove('hidden');
-      };
-      document.getElementById('accountPhase').onchange = (e) => {
-        document.getElementById('payoutField').classList.toggle('hidden', e.target.value !== 'Funded');
-      };
-      document.getElementById('saveAccountBtn').onclick = () => {
-        const firm = document.getElementById('accountFirm').value.trim();
-        const accountName = document.getElementById('accountName').value.trim();
-        if (!firm || !accountName) return alert('Preenche a prop firm e o nome da conta.');
-        if (!state.isPro && state.accounts.length >= 2) return alert('O plano gratuito permite até 2 contas. Ativa o PRO para adicionares mais contas.');
-        const phase = document.getElementById('accountPhase').value;
-        const funded = phase === 'Funded';
-        state.accounts.push({
-          id: Date.now(),
-          firm,
-          phase,
-          accountName,
-          initialBalance: Number(document.getElementById('accountInitialBalance').value || 0),
-          currentBalance: Number(document.getElementById('accountCurrentBalance').value || 0),
-          target: Number(document.getElementById('accountTarget').value || 0),
-          dailyLossLimit: Number(document.getElementById('accountDailyLoss').value || 0),
-          overallDrawdown: Number(document.getElementById('accountDrawdown').value || 0),
-          minTradingDays: Number(document.getElementById('accountMinDays').value || 0),
-          completedDays: Number(document.getElementById('accountCompletedDays').value || 0),
-          mode,
-          connectionType: mode === 'api' ? document.getElementById('accountConnectionType').value : 'manual',
-          platform: mode === 'api' ? document.getElementById('accountPlatform').value : '',
-          isEvaluation: !funded,
-          payoutEligible: funded,
-          totalWithdrawn: 0,
-          nextPayoutDate: funded ? document.getElementById('accountPayoutDate').value : ''
-        });
-        saveCurrentUserData();
-        renderAll();
-      };
-    }
-
-    function renderStatsPage() {
-      const totals = getTotals();
-      const map = {};
-      state.trades.forEach(t => {
-        if (!t.setup) return;
-        if (!map[t.setup]) map[t.setup] = { count: 0, pnl: 0 };
-        map[t.setup].count += 1;
-        map[t.setup].pnl += t.result;
-      });
-      const setups = Object.entries(map).map(([setup, data]) => ({ setup, ...data })).sort((a,b) => b.pnl - a.pnl);
-      document.getElementById('stats').innerHTML = `
-        <div class="grid grid-2">
-          <div class="card">
-            <h2 class="title">Resumo de performance</h2>
-            <div class="grid grid-2">
-              <div class="item"><div class="small muted">Operações totais</div><div class="stat-value">${state.trades.length}</div></div>
-              <div class="item"><div class="small muted">Win rate</div><div class="stat-value">${totals.winRate}%</div></div>
-              <div class="item"><div class="small muted">P/L acumulado</div><div class="stat-value">${currency(totals.pnl)}</div></div>
-              <div class="item"><div class="small muted">Profit factor</div><div class="stat-value">${totals.profitFactor}</div></div>
-            </div>
-          </div>
-          <div class="card">
-            <h2 class="title">Setups ordenados por P/L</h2>
-            <div class="grid">
-              ${setups.length ? setups.map(item => `
-                <div class="item between">
-                  <div><strong>${item.setup}</strong><div class="small muted" style="margin-top:8px;">${item.count} registos</div></div>
-                  <div class="${item.pnl >= 0 ? 'text-green' : 'text-red'}"><strong>${currency(item.pnl)}</strong></div>
-                </div>
-              `).join('') : '<p class="muted">Adiciona trades para veres estatísticas.</p>'}
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderPricing() {
-      document.getElementById('pricing').innerHTML = `
-        <div class="grid grid-2">
-          <div class="card">
-            <h2 class="title">Plano Gratuito</h2>
-            <p class="muted">✔ Até 2 contas</p>
-            <p class="muted">✔ Logbook completo</p>
-            <p class="muted">✔ Estatísticas básicas</p>
-            <p class="muted">✔ Uso ilimitado manual</p>
-            <p class="muted">✔ Registo local por utilizador neste browser</p>
-            <button class="btn-outline full" disabled>Plano Atual</button>
-          </div>
-          <div class="card" style="background:linear-gradient(135deg,#18181b,#000); border-color: rgba(251,191,36,.25);">
-            <h2 class="title" style="color:#fde68a;">Plano PRO</h2>
-            <div style="font-size:32px; font-weight:800; margin-bottom:16px;">€9,90/mês</div>
-            <p class="muted">✔ Contas ilimitadas</p>
-            <p class="muted">✔ Integração API / CSV</p>
-            <p class="muted">✔ Alertas inteligentes</p>
-            <p class="muted">✔ Estatísticas avançadas</p>
-            <p class="muted">✔ Registo e histórico completo de saques</p>
-            <button id="pricingProBtn" class="btn-gold full">Ativar PRO</button>
-          </div>
-        </div>
-      `;
-      document.getElementById('pricingProBtn').onclick = () => {
-        state.isPro = true;
-        saveCurrentUserData();
-        renderAll();
-      };
-    }
-
-    function renderWithdrawals() {
-      const funded = state.accounts.filter(a => a.phase === 'Funded');
-      const options = funded.map(a => `<option value="${a.accountName}">${a.accountName}</option>`).join('');
-      const history = state.withdrawals.map(w => `
-        <div class="item">
-          <div class="between" style="align-items:flex-start;">
-            <div>
-              <div class="row">
-                <strong>${w.accountName}</strong>
-                <span class="badge badge-outline">${w.firm}</span>
-                <span class="badge ${w.status === 'Recebido' ? 'badge-green' : w.status === 'Pago' ? 'badge-blue' : 'badge-amber'}">${w.status}</span>
-              </div>
-              <p class="muted small" style="margin-top:8px;">${w.date}</p>
-              ${w.notes ? `<p>${w.notes}</p>` : ''}
-            </div>
-            <div class="text-green"><strong>${currency(w.amount)}</strong></div>
-          </div>
-        </div>
-      `).join('');
-      document.getElementById('withdrawals').innerHTML = `
-        <div class="layout">
-          <div class="card">
-            <h2 class="title">Registar saque</h2>
-            <div class="field"><label>Conta financiada</label><select id="withdrawAccount">${options}</select></div>
-            <div class="field"><label>Data</label><input id="withdrawDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
-            <div class="field"><label>Valor</label><input id="withdrawAmount" type="number" placeholder="Ex.: 1000"></div>
-            <div class="field"><label>Estado</label><select id="withdrawStatus"><option>Pedido</option><option>Pago</option><option>Recebido</option></select></div>
-            <div class="field"><label>Notas</label><textarea id="withdrawNotes" placeholder="Observações sobre o saque"></textarea></div>
-            <button id="saveWithdrawBtn" class="btn-white full">Guardar saque</button>
-          </div>
-          <div class="card">
-            <h2 class="title">Histórico de saques</h2>
-            <div class="grid">${history || '<p class="muted">Sem saques ainda.</p>'}</div>
-          </div>
-        </div>
-      `;
-
-      document.getElementById('saveWithdrawBtn').onclick = () => {
-        const accountName = document.getElementById('withdrawAccount').value;
-        const amount = document.getElementById('withdrawAmount').value;
-        if (!accountName || amount === '') return alert('Preenche conta e valor.');
-        const acc = state.accounts.find(a => a.accountName === accountName);
-        state.withdrawals.unshift({
-          id: Date.now(),
-          accountName,
-          firm: acc ? acc.firm : '',
-          date: document.getElementById('withdrawDate').value,
-          amount: Number(amount),
-          status: document.getElementById('withdrawStatus').value,
-          notes: document.getElementById('withdrawNotes').value
-        });
-        state.accounts = state.accounts.map(a => a.accountName === accountName ? { ...a, totalWithdrawn: a.totalWithdrawn + Number(amount) } : a);
-        saveCurrentUserData();
-        renderAll();
-      };
-    }
-
-    function setActiveTab(tab) {
-      state.activeTab = tab;
-      document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
-      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
-      document.getElementById(tab).classList.remove('hidden');
-    }
-
-    function renderAll() {
-      renderStatsGrid();
-      renderDashboard();
-      renderTrades();
-      renderAccounts();
-      renderStatsPage();
-      renderPricing();
-      renderWithdrawals();
-      setActiveTab(state.activeTab);
-      saveCurrentUserData();
-    }
-
-    document.getElementById('showLoginBtn').onclick = () => switchAuthMode('login');
-    document.getElementById('showRegisterBtn').onclick = () => switchAuthMode('register');
-
-    document.getElementById('registerBtn').onclick = () => {
-      const name = document.getElementById('registerName').value.trim();
-      const email = slugEmail(document.getElementById('registerEmail').value);
-      const password = document.getElementById('registerPassword').value;
-      const password2 = document.getElementById('registerPassword2').value;
-      if (!name || !email || !password) return alert('Preenche nome, email e password.');
-      if (password !== password2) return alert('As passwords não coincidem.');
-      const users = getAllUsers();
-      if (users[email]) return alert('Esse email já está registado neste browser.');
-      users[email] = { ...defaultUserData(name, email), password };
-      saveAllUsers(users);
-      state.isLoggedIn = true;
-      state.email = email;
-      state.name = name;
-      state.isPro = false;
-      state.accounts = JSON.parse(JSON.stringify(initialAccounts));
-      state.trades = JSON.parse(JSON.stringify(initialTrades));
-      state.withdrawals = JSON.parse(JSON.stringify(initialWithdrawals));
-      saveCurrentUserData();
-      boot();
-    };
-
-    document.getElementById('loginBtn').onclick = () => {
-      const email = slugEmail(document.getElementById('loginEmail').value);
-      const password = document.getElementById('loginPassword').value;
-      if (!email || !password) return alert('Preenche email e password.');
-      const users = getAllUsers();
-      if (!users[email]) return alert('Utilizador não encontrado neste browser. Usa Registar primeiro.');
-      if (users[email].password !== password) return alert('Password incorreta.');
-      state.isLoggedIn = true;
-      state.email = email;
-      state.name = users[email].profile?.name || '';
-      loadActiveUser();
-      saveCurrentUserData();
-      boot();
-    };
-
-    document.getElementById('logoutBtn').onclick = () => {
-      state.isLoggedIn = false;
-      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: false, email: '' }));
-      boot();
-    };
-
-    document.getElementById('exportBtn').onclick = () => {
-      const payload = {
-        exportedAt: new Date().toISOString(),
-        user: { name: state.name, email: state.email },
-        isPro: state.isPro,
-        accounts: state.accounts,
-        trades: state.trades,
-        withdrawals: state.withdrawals
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'wolflog-pro-export.json';
-      link.click();
-      URL.revokeObjectURL(url);
-    };
-
-    document.getElementById('proBtn').onclick = () => {
-      state.isPro = true;
-      saveCurrentUserData();
-      renderAll();
-    };
-
-    document.querySelectorAll('.tab').forEach(btn => {
-      btn.onclick = () => setActiveTab(btn.dataset.tab);
-    });
-
-    function boot() {
-      try {
-        const auth = JSON.parse(localStorage.getItem(storageKeys.auth) || 'null');
-        if (auth && auth.isLoggedIn && auth.email) {
-          state.isLoggedIn = true;
-          state.email = slugEmail(auth.email);
-          loadActiveUser();
-        }
-      } catch (e) {}
-
-      document.getElementById('authScreen').classList.toggle('hidden', state.isLoggedIn);
-      document.getElementById('appScreen').classList.toggle('hidden', !state.isLoggedIn);
-      if (state.isLoggedIn) {
-        renderAll();
-      } else {
-        switchAuthMode(state.authMode || 'login');
-      }
-    }
-
-    boot();
-  </script>
-</body>
-</html>
+  document.getElementById('stripeCheckoutBtn').onclick = () => {
+    window.open(STRIPE_URL, '_blank');
+  };
+}
+</script>
