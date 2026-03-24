@@ -24,6 +24,7 @@
       --blue: #60a5fa;
       --amber: #fbbf24;
     }
+
     * { box-sizing: border-box; }
     html, body { min-height: 100%; }
     body {
@@ -34,6 +35,7 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
+
     .hidden { display: none !important; }
     .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
     .card {
@@ -57,7 +59,7 @@
     .logo-icon {
       width: 72px; height: 72px; border-radius: 24px; background: #000;
       display:flex; align-items:center; justify-content:center;
-      border:1px solid rgba(230,196,106,.2);
+      border:1px solid rgba(251,191,36,.2);
       box-shadow: 0 18px 50px rgba(0,0,0,.35);
       flex: 0 0 auto;
       overflow: hidden;
@@ -70,6 +72,7 @@
       color: transparent;
     }
     .logo-sub { text-transform: uppercase; letter-spacing: .34em; color: rgba(251,191,36,.6); font-size: 10px; font-weight: 600; }
+
     input, select, textarea {
       width: 100%;
       padding: 12px 14px;
@@ -84,6 +87,7 @@
     textarea { min-height: 100px; resize: vertical; }
     label { display: block; font-size: 14px; color: #ddd; }
     .field { margin-bottom: 14px; }
+
     button {
       padding: 12px 16px;
       border: none;
@@ -98,6 +102,7 @@
     .btn-gold { background: var(--gold); color: #000; }
     .btn-danger { background: #2a1111; color: #fca5a5; border: 1px solid rgba(248,113,113,.25); }
     .full { width: 100%; }
+
     .badge {
       display:inline-flex; align-items:center; gap:6px;
       border-radius:999px; padding:6px 10px; font-size:12px; font-weight:700;
@@ -108,8 +113,10 @@
     .badge-amber { background: rgba(251,191,36,.15); color: #fcd34d; }
     .badge-blue { background: rgba(96,165,250,.15); color: #93c5fd; }
     .badge-red { background: rgba(248,113,113,.15); color: #fca5a5; }
+
     .stats p { margin-bottom: 4px; }
     .stat-value { font-size: 28px; font-weight: 800; }
+
     .tabs {
       display:grid; grid-template-columns: repeat(6,1fr); gap: 6px;
       background: var(--bg-soft); padding: 6px; border-radius: 18px; margin-top: 26px;
@@ -139,6 +146,7 @@
       color: #f5e6b0;
       font-size: 13px;
     }
+
     @media (max-width: 960px) {
       .layout { grid-template-columns: 1fr; }
       .tabs { grid-template-columns: repeat(3,1fr); position: static; }
@@ -296,7 +304,10 @@
   </div>
 
   <script>
-    const storageKeys = { auth: 'wolflog_pro_auth', users: 'wolflog_local_users' };
+    const storageKeys = {
+      auth: 'wolflog_pro_auth',
+      users: 'wolflog_local_users'
+    };
     const STRIPE_URL = 'https://buy.stripe.com/6oUbJ25AEgvR6ln27RaR200';
     let deferredPrompt = null;
 
@@ -315,31 +326,43 @@
       try { return JSON.parse(localStorage.getItem(storageKeys.users) || '{}'); }
       catch { return {}; }
     }
-    function setUsers(users) { localStorage.setItem(storageKeys.users, JSON.stringify(users)); }
+
+    function setUsers(users) {
+      localStorage.setItem(storageKeys.users, JSON.stringify(users));
+    }
+
     function getAuth() {
       try { return JSON.parse(localStorage.getItem(storageKeys.auth) || 'null'); }
       catch { return null; }
     }
-    function setAuth(email) { localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: true, email })); }
-    function clearAuth() { localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: false, email: '' })); }
+
+    function setAuth(email) {
+      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: true, email }));
+    }
+
+    function clearAuth() {
+      localStorage.setItem(storageKeys.auth, JSON.stringify({ isLoggedIn: false, email: '' }));
+    }
+
     function currency(value) {
       return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(value || 0));
     }
-    function isIos() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
-    function isInStandaloneMode() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
-    function defaultUserData(name, email, password) { return { profile: { name, email }, password, isPro: false, accounts: [], trades: [], withdrawals: [] }; }
+
+    function isIos() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+
+    function isInStandaloneMode() {
+      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    }
 
     function updateInstallUi() {
       const standalone = isInStandaloneMode();
       const ios = isIos();
-      const a = document.getElementById('installBtnAuth');
-      const b = document.getElementById('installBtnApp');
-      const c = document.getElementById('iosInstallNoteAuth');
-      const d = document.getElementById('iosInstallNoteApp');
-      if (a) a.classList.toggle('hidden', !deferredPrompt || standalone);
-      if (b) b.classList.toggle('hidden', !deferredPrompt || standalone);
-      if (c) c.classList.toggle('hidden', !(ios && !standalone));
-      if (d) d.classList.toggle('hidden', !(ios && !standalone && state.isLoggedIn));
+      document.getElementById('installBtnAuth').classList.toggle('hidden', !deferredPrompt || standalone);
+      document.getElementById('installBtnApp').classList.toggle('hidden', !deferredPrompt || standalone);
+      document.getElementById('iosInstallNoteAuth').classList.toggle('hidden', !(ios && !standalone));
+      document.getElementById('iosInstallNoteApp').classList.toggle('hidden', !(ios && !standalone && state.isLoggedIn));
     }
 
     async function installApp() {
@@ -348,6 +371,10 @@
       try { await deferredPrompt.userChoice; } catch {}
       deferredPrompt = null;
       updateInstallUi();
+    }
+
+    function defaultUserData(name, email, password) {
+      return { profile: { name, email }, password, isPro: false, accounts: [], trades: [], withdrawals: [] };
     }
 
     function loadCurrentUser() {
@@ -475,7 +502,17 @@
         const result = document.getElementById('tradeResult').value;
         const account = document.getElementById('tradeAccount').value;
         if (!asset || result === '' || !account) return alert('Preenche ativo, conta e resultado.');
-        state.trades.unshift({ id: Date.now(), date: document.getElementById('tradeDate').value, asset, side: document.getElementById('tradeSide').value, account, setup: document.getElementById('tradeSetup').value.trim(), result: Number(result), emotion: document.getElementById('tradeEmotion').value.trim(), notes: document.getElementById('tradeNotes').value.trim() });
+        state.trades.unshift({
+          id: Date.now(),
+          date: document.getElementById('tradeDate').value,
+          asset,
+          side: document.getElementById('tradeSide').value,
+          account,
+          setup: document.getElementById('tradeSetup').value.trim(),
+          result: Number(result),
+          emotion: document.getElementById('tradeEmotion').value.trim(),
+          notes: document.getElementById('tradeNotes').value.trim()
+        });
         saveCurrentUser();
         renderAll();
       };
@@ -486,34 +523,143 @@
         const pnl = Number(account.currentBalance || 0) - Number(account.initialBalance || 0);
         const drawdownUsed = Math.max(0, Number(account.initialBalance || 0) - Number(account.currentBalance || 0));
         const ddProgress = Number(account.overallDrawdown || 0) ? Math.min(100, (drawdownUsed / Number(account.overallDrawdown)) * 100) : 0;
-        return `<div class="card"><div class="between" style="align-items:flex-start;"><div><div class="row"><strong style="font-size:20px;">${account.accountName}</strong><span class="badge badge-dark">${account.phase}</span><span class="badge badge-outline">${account.firm}</span></div><div class="row" style="margin-top:8px;"><span class="badge ${account.phase === 'Funded' ? 'badge-green' : 'badge-amber'}">${account.phase === 'Funded' ? 'Financiada' : 'Teste / Avaliação'}</span><span class="badge badge-outline">${account.mode === 'api' ? 'Ligação automática' : 'Manual'}</span>${account.mode === 'api' ? `<span class="badge badge-amber">${account.connectionType === 'api' ? 'API' : account.connectionType === 'read-only' ? 'Read-only' : 'CSV'}</span>` : ''}${account.platform ? `<span class="badge badge-outline">${account.platform}</span>` : ''}</div>${account.phase === 'Funded' && account.nextPayoutDate ? `<p class="small muted" style="margin-top:8px;">Próximo saque: ${account.nextPayoutDate}</p>` : ''}</div><div class="${pnl >= 0 ? 'text-green' : 'text-red'}"><strong>${currency(pnl)}</strong></div></div><div class="grid grid-2" style="margin-top:14px;"><div class="item"><div class="small muted">Saldo atual</div><div style="margin-top:8px;"><strong>${currency(account.currentBalance)}</strong></div></div><div class="item"><div class="small muted">${account.phase === 'Funded' ? 'Sacado' : 'Target'}</div><div style="margin-top:8px;"><strong>${account.phase === 'Funded' ? currency(account.totalWithdrawn) : currency(account.target)}</strong></div></div><div class="item"><div class="small muted">Loss diário</div><div style="margin-top:8px;"><strong>${currency(account.dailyLossLimit)}</strong></div></div><div class="item"><div class="small muted">Dias</div><div style="margin-top:8px;"><strong>${account.completedDays}/${account.minTradingDays}</strong></div></div></div><div style="margin-top:14px;"><div class="between"><span class="small muted">Uso do drawdown total</span><span class="small muted">${Math.round(ddProgress)}%</span></div><div class="progress"><span style="width:${ddProgress}%"></span></div></div><div class="row" style="margin-top:14px;"><button class="btn-danger" data-delete-account="${account.id}">Eliminar conta</button></div></div>`;
+        return `<div class="card">
+          <div class="between" style="align-items:flex-start;">
+            <div>
+              <div class="row">
+                <strong style="font-size:20px;">${account.accountName}</strong>
+                <span class="badge badge-dark">${account.phase}</span>
+                <span class="badge badge-outline">${account.firm}</span>
+              </div>
+              <div class="row" style="margin-top:8px;">
+                <span class="badge ${account.phase === 'Funded' ? 'badge-green' : 'badge-amber'}">${account.phase === 'Funded' ? 'Financiada' : 'Teste / Avaliação'}</span>
+                <span class="badge badge-outline">${account.mode === 'api' ? 'Ligação automática' : 'Manual'}</span>
+                ${account.mode === 'api' ? `<span class="badge badge-amber">${account.connectionType === 'api' ? 'API' : account.connectionType === 'read-only' ? 'Read-only' : 'CSV'}</span>` : ''}
+                ${account.platform ? `<span class="badge badge-outline">${account.platform}</span>` : ''}
+              </div>
+              ${account.phase === 'Funded' && account.nextPayoutDate ? `<p class="small muted" style="margin-top:8px;">Próximo saque: ${account.nextPayoutDate}</p>` : ''}
+            </div>
+            <div class="${pnl >= 0 ? 'text-green' : 'text-red'}"><strong>${currency(pnl)}</strong></div>
+          </div>
+
+          <div class="grid grid-2" style="margin-top:14px;">
+            <div class="item"><div class="small muted">Saldo atual</div><div style="margin-top:8px;"><strong>${currency(account.currentBalance)}</strong></div></div>
+            <div class="item"><div class="small muted">${account.phase === 'Funded' ? 'Sacado' : 'Target'}</div><div style="margin-top:8px;"><strong>${account.phase === 'Funded' ? currency(account.totalWithdrawn) : currency(account.target)}</strong></div></div>
+            <div class="item"><div class="small muted">Loss diário</div><div style="margin-top:8px;"><strong>${currency(account.dailyLossLimit)}</strong></div></div>
+            <div class="item"><div class="small muted">Dias</div><div style="margin-top:8px;"><strong>${account.completedDays}/${account.minTradingDays}</strong></div></div>
+          </div>
+
+          <div style="margin-top:14px;">
+            <div class="between"><span class="small muted">Uso do drawdown total</span><span class="small muted">${Math.round(ddProgress)}%</span></div>
+            <div class="progress"><span style="width:${ddProgress}%"></span></div>
+          </div>
+
+          <div class="row" style="margin-top:14px;">
+            <button class="btn-danger" data-delete-account="${account.id}">Eliminar conta</button>
+          </div>
+        </div>`;
       }).join('') : '<div class="card"><div class="list-empty">Ainda não tens contas adicionadas.</div></div>';
 
-      document.getElementById('accounts').innerHTML = `<div class="layout"><div class="card"><h2 class="title">Adicionar conta</h2><div class="field"><label>Modo de conta</label><div class="mode-switch"><button id="modeManual" class="mode-btn active">Manual<br><span class="small muted">Inserção manual de saldo e regras.</span></button><button id="modeApi" class="mode-btn">Ligação automática<br><span class="small muted">CSV, API ou leitura.</span></button></div></div><div id="apiFields" class="hidden"><div class="field"><label>Tipo de conexão</label><select id="accountConnectionType"><option value="csv">Importação CSV</option><option value="api">API</option><option value="read-only">Read-only / Investor</option></select></div><div class="field"><label>Plataforma</label><select id="accountPlatform"><option value="">Escolher plataforma</option><option>MT5</option><option>cTrader</option><option>DXtrade</option><option>Tradovate</option><option>MatchTrader</option></select></div></div><div class="field"><label>Prop firm</label><input id="accountFirm" placeholder="FTMO, Apex, 5ers..."></div><div class="field"><label>Fase</label><select id="accountPhase"><option>Challenge</option><option>Verification</option><option>Funded</option></select></div><div class="field hidden" id="payoutField"><label>Próxima data de saque</label><input id="accountPayoutDate" type="date"></div><div class="field"><label>Nome da conta</label><input id="accountName" placeholder="FTMO 100K"></div><div class="grid grid-2"><div class="field"><label>Saldo inicial</label><input id="accountInitialBalance" type="number"></div><div class="field"><label>Saldo atual</label><input id="accountCurrentBalance" type="number"></div></div><div class="grid grid-2"><div class="field"><label>Target</label><input id="accountTarget" type="number"></div><div class="field"><label>Loss diário</label><input id="accountDailyLoss" type="number"></div></div><div class="grid grid-2"><div class="field"><label>Drawdown total</label><input id="accountDrawdown" type="number"></div><div class="field"><label>Dias mínimos</label><input id="accountMinDays" type="number"></div></div><div class="field"><label>Dias feitos</label><input id="accountCompletedDays" type="number"></div><button id="saveAccountBtn" class="btn-white full">Guardar conta</button></div><div class="grid">${accountCards}</div></div>`;
+      document.getElementById('accounts').innerHTML = `
+        <div class="layout">
+          <div class="card">
+            <h2 class="title">Adicionar conta</h2>
+
+            <div class="field">
+              <label>Modo de conta</label>
+              <div class="mode-switch">
+                <button id="modeManual" class="mode-btn active">Manual<br><span class="small muted">Inserção manual de saldo e regras.</span></button>
+                <button id="modeApi" class="mode-btn">Ligação automática<br><span class="small muted">CSV, API ou leitura.</span></button>
+              </div>
+            </div>
+
+            <div id="apiFields" class="hidden">
+              <div class="field">
+                <label>Tipo de conexão</label>
+                <select id="accountConnectionType">
+                  <option value="csv">Importação CSV</option>
+                  <option value="api">API</option>
+                  <option value="read-only">Read-only / Investor</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Plataforma</label>
+                <select id="accountPlatform">
+                  <option value="">Escolher plataforma</option>
+                  <option>MT5</option>
+                  <option>cTrader</option>
+                  <option>DXtrade</option>
+                  <option>Tradovate</option>
+                  <option>MatchTrader</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field"><label>Prop firm</label><input id="accountFirm" placeholder="FTMO, Apex, 5ers..."></div>
+            <div class="field">
+              <label>Fase</label>
+              <select id="accountPhase">
+                <option>Challenge</option>
+                <option>Verification</option>
+                <option>Funded</option>
+              </select>
+            </div>
+            <div class="field hidden" id="payoutField"><label>Próxima data de saque</label><input id="accountPayoutDate" type="date"></div>
+            <div class="field"><label>Nome da conta</label><input id="accountName" placeholder="FTMO 100K"></div>
+
+            <div class="grid grid-2">
+              <div class="field"><label>Saldo inicial</label><input id="accountInitialBalance" type="number"></div>
+              <div class="field"><label>Saldo atual</label><input id="accountCurrentBalance" type="number"></div>
+            </div>
+
+            <div class="grid grid-2">
+              <div class="field"><label>Target</label><input id="accountTarget" type="number"></div>
+              <div class="field"><label>Loss diário</label><input id="accountDailyLoss" type="number"></div>
+            </div>
+
+            <div class="grid grid-2">
+              <div class="field"><label>Drawdown total</label><input id="accountDrawdown" type="number"></div>
+              <div class="field"><label>Dias mínimos</label><input id="accountMinDays" type="number"></div>
+            </div>
+
+            <div class="field"><label>Dias feitos</label><input id="accountCompletedDays" type="number"></div>
+            <button id="saveAccountBtn" class="btn-white full">Guardar conta</button>
+          </div>
+
+          <div class="grid">${accountCards}</div>
+        </div>
+      `;
 
       let mode = 'manual';
+
       document.getElementById('modeManual').onclick = () => {
         mode = 'manual';
         document.getElementById('modeManual').classList.add('active');
         document.getElementById('modeApi').classList.remove('active');
         document.getElementById('apiFields').classList.add('hidden');
       };
+
       document.getElementById('modeApi').onclick = () => {
         mode = 'api';
         document.getElementById('modeApi').classList.add('active');
         document.getElementById('modeManual').classList.remove('active');
         document.getElementById('apiFields').classList.remove('hidden');
       };
+
       document.getElementById('accountPhase').onchange = (e) => {
         document.getElementById('payoutField').classList.toggle('hidden', e.target.value !== 'Funded');
       };
+
       document.getElementById('saveAccountBtn').onclick = () => {
         const firm = document.getElementById('accountFirm').value.trim();
         const accountName = document.getElementById('accountName').value.trim();
+
         if (!firm || !accountName) return alert('Preenche a prop firm e o nome da conta.');
         if (!state.isPro && state.accounts.length >= 2) return alert('O plano gratuito permite até 2 contas. Ativa o PRO para adicionares mais contas.');
+
         const phase = document.getElementById('accountPhase').value;
         const funded = phase === 'Funded';
+
         state.accounts.push({
           id: Date.now(),
           firm,
@@ -532,6 +678,7 @@
           totalWithdrawn: 0,
           nextPayoutDate: funded ? document.getElementById('accountPayoutDate').value : ''
         });
+
         saveCurrentUser();
         renderAll();
       };
@@ -540,12 +687,15 @@
         btn.onclick = () => {
           const id = Number(btn.dataset.deleteAccount);
           if (!confirm('Queres eliminar esta conta?')) return;
+
           const acc = state.accounts.find(a => a.id === id);
           state.accounts = state.accounts.filter(a => a.id !== id);
+
           if (acc) {
             state.trades = state.trades.filter(t => t.account !== acc.accountName);
             state.withdrawals = state.withdrawals.filter(w => w.accountName !== acc.accountName);
           }
+
           saveCurrentUser();
           renderAll();
         };
@@ -562,21 +712,70 @@
         map[t.setup].pnl += Number(t.result || 0);
       });
       const setups = Object.entries(map).map(([setup, data]) => ({ setup, ...data })).sort((a,b) => b.pnl - a.pnl);
-      document.getElementById('stats').innerHTML = `<div class="grid grid-2"><div class="card"><h2 class="title">Resumo de performance</h2><div class="grid grid-2"><div class="item"><div class="small muted">Operações totais</div><div class="stat-value">${state.trades.length}</div></div><div class="item"><div class="small muted">Win rate</div><div class="stat-value">${totals.winRate}%</div></div><div class="item"><div class="small muted">P/L acumulado</div><div class="stat-value">${currency(totals.pnl)}</div></div><div class="item"><div class="small muted">Profit factor</div><div class="stat-value">${totals.profitFactor}</div></div></div></div><div class="card"><h2 class="title">Setups ordenados por P/L</h2><div class="grid">${setups.length ? setups.map(item => `<div class="item between"><div><strong>${item.setup}</strong><div class="small muted" style="margin-top:8px;">${item.count} registos</div></div><div class="${item.pnl >= 0 ? 'text-green' : 'text-red'}"><strong>${currency(item.pnl)}</strong></div></div>`).join('') : '<div class="item list-empty">Adiciona trades reais para veres estatísticas.</div>'}</div></div></div>`;
+
+      document.getElementById('stats').innerHTML = `
+        <div class="grid grid-2">
+          <div class="card">
+            <h2 class="title">Resumo de performance</h2>
+            <div class="grid grid-2">
+              <div class="item"><div class="small muted">Operações totais</div><div class="stat-value">${state.trades.length}</div></div>
+              <div class="item"><div class="small muted">Win rate</div><div class="stat-value">${totals.winRate}%</div></div>
+              <div class="item"><div class="small muted">P/L acumulado</div><div class="stat-value">${currency(totals.pnl)}</div></div>
+              <div class="item"><div class="small muted">Profit factor</div><div class="stat-value">${totals.profitFactor}</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="title">Setups ordenados por P/L</h2>
+            <div class="grid">
+              ${setups.length ? setups.map(item => `
+                <div class="item between">
+                  <div>
+                    <strong>${item.setup}</strong>
+                    <div class="small muted" style="margin-top:8px;">${item.count} registos</div>
+                  </div>
+                  <div class="${item.pnl >= 0 ? 'text-green' : 'text-red'}"><strong>${currency(item.pnl)}</strong></div>
+                </div>
+              `).join('') : '<div class="item list-empty">Adiciona trades reais para veres estatísticas.</div>'}
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function renderPricing() {
-      document.getElementById('pricing').innerHTML = `<div class="grid grid-2"><div class="card"><h2 class="title">Plano Gratuito</h2><p class="muted">✔ Até 2 contas</p><p class="muted">✔ Logbook completo</p><p class="muted">✔ Estatísticas básicas</p><p class="muted">✔ Uso ilimitado manual</p><p class="muted">✔ PWA instalável no telemóvel</p><button class="btn-outline full" disabled>Plano Atual</button></div><div class="card" style="background:linear-gradient(135deg,#18181b,#000); border-color: rgba(251,191,36,.25);"><h2 class="title" style="color:#fde68a;">Plano PRO</h2><div style="font-size:32px; font-weight:800; margin-bottom:16px;">€9,90/mês</div><p class="muted">✔ Contas ilimitadas</p><p class="muted">✔ Estatísticas avançadas</p><p class="muted">✔ Alertas inteligentes</p><p class="muted">✔ Histórico completo de saques</p><button id="stripeCheckoutBtn" class="btn-gold full">Ativar PRO agora</button></div></div>`;
+      document.getElementById('pricing').innerHTML = `
+        <div class="grid grid-2">
+          <div class="card">
+            <h2 class="title">Plano Gratuito</h2>
+            <p class="muted">✔ Até 2 contas</p>
+            <p class="muted">✔ Logbook completo</p>
+            <p class="muted">✔ Estatísticas básicas</p>
+            <p class="muted">✔ Uso ilimitado manual</p>
+            <p class="muted">✔ PWA instalável no telemóvel</p>
+            <button class="btn-outline full" disabled>Plano Atual</button>
+          </div>
+
+          <div class="card" style="background:linear-gradient(135deg,#18181b,#000); border-color: rgba(251,191,36,.25);">
+            <h2 class="title" style="color:#fde68a;">Plano PRO</h2>
+            <div style="font-size:32px; font-weight:800; margin-bottom:16px;">€9,90/mês</div>
+            <p class="muted">✔ Contas ilimitadas</p>
+            <p class="muted">✔ Estatísticas avançadas</p>
+            <p class="muted">✔ Alertas inteligentes</p>
+            <p class="muted">✔ Histórico completo de saques</p>
+            <button id="stripeCheckoutBtn" class="btn-gold full">Ativar PRO agora</button>
+          </div>
+        </div>
+      `;
+
       document.getElementById('stripeCheckoutBtn').onclick = () => {
         window.location.href = STRIPE_URL;
       };
     }
 
-        function renderWithdrawals() {
+    function renderWithdrawals() {
       const funded = state.accounts.filter(a => a.phase === 'Funded');
-      const options = funded.length
-        ? funded.map(a => `<option value="${a.accountName}">${a.accountName}</option>`).join('')
-        : '<option value="">Sem contas financiadas</option>';
+      const options = funded.length ? funded.map(a => `<option value="${a.accountName}">${a.accountName}</option>`).join('') : '<option value="">Sem contas financiadas</option>';
 
       const history = state.withdrawals.map(w => `
         <div class="item">
@@ -606,6 +805,7 @@
             <div class="field"><label>Notas</label><textarea id="withdrawNotes" placeholder="Observações sobre o saque"></textarea></div>
             <button id="saveWithdrawBtn" class="btn-white full">Guardar saque</button>
           </div>
+
           <div class="card">
             <h2 class="title">Histórico de saques</h2>
             <div class="grid">${history || '<div class="item list-empty">Sem saques ainda.</div>'}</div>
@@ -615,6 +815,7 @@
 
       document.getElementById('saveWithdrawBtn').onclick = () => {
         if (!funded.length) return alert('Precisas de pelo menos uma conta financiada para registar saques.');
+
         const accountName = document.getElementById('withdrawAccount').value;
         const amount = document.getElementById('withdrawAmount').value;
         if (!accountName || amount === '') return alert('Preenche conta e valor.');
@@ -662,6 +863,11 @@
     }
 
     function setupEvents() {
+      document.getElementById('enterAppBtn').onclick = () => {
+        document.getElementById('landingScreen').classList.add('hidden');
+        document.getElementById('authScreen').classList.remove('hidden');
+      };
+
       document.getElementById('showLoginBtn').onclick = () => showAuthPanel('login');
       document.getElementById('showRegisterBtn').onclick = () => showAuthPanel('register');
       document.getElementById('showForgotBtn').onclick = () => showAuthPanel('forgot');
@@ -676,12 +882,15 @@
         const password2 = document.getElementById('registerPassword2').value;
         if (!name || !email || !password) return alert('Preenche nome, email e password.');
         if (password !== password2) return alert('As passwords não coincidem.');
+
         const users = getUsers();
         if (users[email]) return alert('Esse email já está registado neste browser.');
+
         users[email] = defaultUserData(name, email, password);
         setUsers(users);
         setAuth(email);
         loadCurrentUser();
+
         document.getElementById('authScreen').classList.add('hidden');
         document.getElementById('appScreen').classList.remove('hidden');
         renderAll();
@@ -691,11 +900,14 @@
         const email = String(document.getElementById('loginEmail').value || '').trim().toLowerCase();
         const password = document.getElementById('loginPassword').value;
         if (!email || !password) return alert('Preenche email e password.');
+
         const users = getUsers();
         if (!users[email]) return alert('Utilizador não encontrado neste browser. Usa Registar primeiro.');
         if (users[email].password !== password) return alert('Password incorreta.');
+
         setAuth(email);
         loadCurrentUser();
+
         document.getElementById('authScreen').classList.add('hidden');
         document.getElementById('appScreen').classList.remove('hidden');
         renderAll();
@@ -707,11 +919,14 @@
         const password2 = document.getElementById('forgotPassword2').value;
         if (!email || !password) return alert('Preenche email e nova password.');
         if (password !== password2) return alert('As passwords não coincidem.');
+
         const users = getUsers();
         if (!users[email]) return alert('Não existe nenhuma conta com esse email neste browser.');
+
         users[email].password = password;
         setUsers(users);
         alert('Password atualizada com sucesso.');
+
         document.getElementById('loginEmail').value = email;
         document.getElementById('loginPassword').value = '';
         showAuthPanel('login');
@@ -743,6 +958,7 @@
       };
 
       document.getElementById('proBtn').onclick = () => setActiveTab('pricing');
+
       document.querySelectorAll('.tab').forEach(btn => {
         btn.onclick = () => setActiveTab(btn.dataset.tab);
       });
@@ -767,11 +983,13 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
     }
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
       updateInstallUi();
     });
+
     window.addEventListener('appinstalled', () => {
       deferredPrompt = null;
       updateInstallUi();
