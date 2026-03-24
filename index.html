@@ -572,16 +572,53 @@
       };
     }
 
-    function renderWithdrawals() {
+        function renderWithdrawals() {
       const funded = state.accounts.filter(a => a.phase === 'Funded');
-      const options = funded.length ? funded.map(a => `<option value="${a.accountName}">${a.accountName}</option>`).join('') : '<option value="">Sem contas financiadas</option>';
-      const history = state.withdrawals.map(w => `<div class="item"><div class="between" style="align-items:flex-start;"><div><div class="row"><strong>${w.accountName}</strong><span class="badge badge-outline">${w.firm}</span><span class="badge ${w.status === 'Recebido' ? 'badge-green' : w.status === 'Pago' ? 'badge-blue' : 'badge-amber'}">${w.status}</span></div><p class="muted small" style="margin-top:8px;">${w.date}</p>${w.notes ? `<p>${w.notes}</p>` : ''}</div><div class="text-green"><strong>${currency(w.amount)}</strong></div></div></div>`).join('');
-      document.getElementById('withdrawals').innerHTML = `<div class="layout"><div class="card"><h2 class="title">Registar saque</h2><div class="field"><label>Conta financiada</label><select id="withdrawAccount">${options}</select></div><div class="field"><label>Data</label><input id="withdrawDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>Valor</label><input id="withdrawAmount" type="number" placeholder="Ex.: 1000"></div><div class="field"><label>Estado</label><select id="withdrawStatus"><option>Pedido</option><option>Pago</option><option>Recebido</option></select></div><div class="field"><label>Notas</label><textarea id="withdrawNotes" placeholder="Observações sobre o saque"></textarea></div><button id="saveWithdrawBtn" class="btn-white full">Guardar saque</button></div><div class="card"><h2 class="title">Histórico de saques</h2><div class="grid">${history || '<div class="item list-empty">Sem saques ainda.</div>'}</div></div></div>`;
+      const options = funded.length
+        ? funded.map(a => `<option value="${a.accountName}">${a.accountName}</option>`).join('')
+        : '<option value="">Sem contas financiadas</option>';
+
+      const history = state.withdrawals.map(w => `
+        <div class="item">
+          <div class="between" style="align-items:flex-start;">
+            <div>
+              <div class="row">
+                <strong>${w.accountName}</strong>
+                <span class="badge badge-outline">${w.firm}</span>
+                <span class="badge ${w.status === 'Recebido' ? 'badge-green' : w.status === 'Pago' ? 'badge-blue' : 'badge-amber'}">${w.status}</span>
+              </div>
+              <p class="muted small" style="margin-top:8px;">${w.date}</p>
+              ${w.notes ? `<p>${w.notes}</p>` : ''}
+            </div>
+            <div class="text-green"><strong>${currency(w.amount)}</strong></div>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('withdrawals').innerHTML = `
+        <div class="layout">
+          <div class="card">
+            <h2 class="title">Registar saque</h2>
+            <div class="field"><label>Conta financiada</label><select id="withdrawAccount">${options}</select></div>
+            <div class="field"><label>Data</label><input id="withdrawDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+            <div class="field"><label>Valor</label><input id="withdrawAmount" type="number" placeholder="Ex.: 1000"></div>
+            <div class="field"><label>Estado</label><select id="withdrawStatus"><option>Pedido</option><option>Pago</option><option>Recebido</option></select></div>
+            <div class="field"><label>Notas</label><textarea id="withdrawNotes" placeholder="Observações sobre o saque"></textarea></div>
+            <button id="saveWithdrawBtn" class="btn-white full">Guardar saque</button>
+          </div>
+          <div class="card">
+            <h2 class="title">Histórico de saques</h2>
+            <div class="grid">${history || '<div class="item list-empty">Sem saques ainda.</div>'}</div>
+          </div>
+        </div>
+      `;
+
       document.getElementById('saveWithdrawBtn').onclick = () => {
         if (!funded.length) return alert('Precisas de pelo menos uma conta financiada para registar saques.');
         const accountName = document.getElementById('withdrawAccount').value;
         const amount = document.getElementById('withdrawAmount').value;
         if (!accountName || amount === '') return alert('Preenche conta e valor.');
+
         const acc = state.accounts.find(a => a.accountName === accountName);
         state.withdrawals.unshift({
           id: Date.now(),
@@ -592,7 +629,13 @@
           status: document.getElementById('withdrawStatus').value,
           notes: document.getElementById('withdrawNotes').value.trim()
         });
-        state.accounts = state.accounts.map(a => a.accountName === accountName ? { ...a, totalWithdrawn: Number(a.totalWithdrawn || 0) + Number(amount) } : a);
+
+        state.accounts = state.accounts.map(a =>
+          a.accountName === accountName
+            ? { ...a, totalWithdrawn: Number(a.totalWithdrawn || 0) + Number(amount) }
+            : a
+        );
+
         saveCurrentUser();
         renderAll();
       };
@@ -619,10 +662,6 @@
     }
 
     function setupEvents() {
-      document.getElementById('enterAppBtn').onclick = () => {
-        document.getElementById('landingScreen').classList.add('hidden');
-        document.getElementById('authScreen').classList.remove('hidden');
-      };
       document.getElementById('showLoginBtn').onclick = () => showAuthPanel('login');
       document.getElementById('showRegisterBtn').onclick = () => showAuthPanel('register');
       document.getElementById('showForgotBtn').onclick = () => showAuthPanel('forgot');
@@ -704,7 +743,9 @@
       };
 
       document.getElementById('proBtn').onclick = () => setActiveTab('pricing');
-      document.querySelectorAll('.tab').forEach(btn => { btn.onclick = () => setActiveTab(btn.dataset.tab); });
+      document.querySelectorAll('.tab').forEach(btn => {
+        btn.onclick = () => setActiveTab(btn.dataset.tab);
+      });
     }
 
     function boot() {
@@ -726,8 +767,15 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
     }
-    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; updateInstallUi(); });
-    window.addEventListener('appinstalled', () => { deferredPrompt = null; updateInstallUi(); });
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      updateInstallUi();
+    });
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      updateInstallUi();
+    });
 
     setupEvents();
     boot();
